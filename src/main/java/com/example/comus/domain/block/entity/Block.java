@@ -18,9 +18,9 @@ public class Block  {
 
     private String level;
 
-    private int row;
+    private int blockRow;
 
-    private int col;
+    private int blockColumn;
 
     @OneToOne
     @JoinColumn(name = "answer_id")

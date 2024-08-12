@@ -21,11 +21,14 @@ public class Question  {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    private String QuestionContent;
+    private String questionContent;
 
     @Enumerated(EnumType.STRING)
     private AnswerType answerType;
 
     @OneToMany(mappedBy = "question")
     private List<Answer> answers;
+
+    private String multipleChoices;
+
 }

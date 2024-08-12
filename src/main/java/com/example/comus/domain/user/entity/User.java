@@ -1,6 +1,7 @@
 package com.example.comus.domain.user.entity;
 
 import com.example.comus.domain.answer.entity.Answer;
+import com.example.comus.domain.question.entity.Question;
 import com.example.comus.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,5 +32,6 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Answer> answers;
+
 
 }
