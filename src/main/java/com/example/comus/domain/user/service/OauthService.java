@@ -1,6 +1,5 @@
 package com.example.comus.domain.user.service;
 
-import com.example.comus.domain.user.dto.response.UserInfoResponseDto;
 import com.example.comus.domain.user.entity.User;
 import com.example.comus.domain.user.repository.UserRespository;
 import com.fasterxml.jackson.core.JsonProcessingException;
