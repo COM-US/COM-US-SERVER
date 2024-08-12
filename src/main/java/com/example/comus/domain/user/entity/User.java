@@ -3,16 +3,15 @@ package com.example.comus.domain.user.entity;
 import com.example.comus.domain.answer.entity.Answer;
 import com.example.comus.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-
-
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
 @Table(name = "user")
 @Entity
 public class User extends BaseTimeEntity {
@@ -22,7 +21,7 @@ public class User extends BaseTimeEntity {
 
     private String name;
 
-    private String ImageUrl;
+    private String imageUrl;
 
     private LocalTime todayChatTime;
 
@@ -32,7 +31,5 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Answer> answers;
-
-
 
 }
