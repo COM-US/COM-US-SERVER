@@ -15,4 +15,13 @@ public class SignLanguage{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String signLanguageName;
+
+    private String signLanguageImageUrl;
+
+    private String signLanguageVideoUrl;
+
+    private String signLanguageDescription;
+
+
 }
