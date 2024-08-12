@@ -32,4 +32,10 @@ public class QuestionController {
 
         return SuccessResponse.ok(questionList);
     }
+
+    @GetMapping("{question_id}/multiple-choice")
+    public ResponseEntity<SuccessResponse<?>> getMultipleChoiceAnswer(@PathVariable("question_id") Long questionId) {
+        List<String> answerList = questionService.getMultipleChoiceAnswer(questionId);
+        return SuccessResponse.ok(answerList);
+    }
 }
