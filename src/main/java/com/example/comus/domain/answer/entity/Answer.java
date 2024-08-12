@@ -23,7 +23,7 @@ public class Answer extends BaseTimeEntity {
     private Long id;
 
     private String answerContent;
-
+/*
     @OneToOne
     @JoinColumn(name = "sign_language_id")
     private SignLanguage signLanguage;
@@ -31,7 +31,7 @@ public class Answer extends BaseTimeEntity {
     @OneToOne
     @JoinColumn(name = "block_id")
     private Block block;
-
+*/
     @ManyToOne
     @JoinColumn(name = "question_id")
     private Question question;
