@@ -84,4 +84,16 @@ public class QuestionService {
 
         );
     }
+
+    public QuestionListResponseDto getQuestionAndCount(Long questionId) {
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
+        int questionCount = answerRepository.countByQuestionId(questionId);
+        return new QuestionListResponseDto(
+                question.getId(),
+                question.getCategory(),
+                question.getAnswerType(),
+                question.getQuestionContent(),
+                questionCount
+        );
+    }
 }

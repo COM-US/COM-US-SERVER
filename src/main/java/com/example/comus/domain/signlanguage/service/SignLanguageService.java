@@ -1,10 +1,100 @@
 package com.example.comus.domain.signlanguage.service;
 
+import com.example.comus.domain.signlanguage.dto.response.SignLanguageInfoResponseDto;
+import com.example.comus.global.error.exception.EntityNotFoundException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static com.example.comus.global.error.ErrorCode.SIGNLANGUAGE_NOT_FOUND;
 
 @Service
 @Transactional
 public class SignLanguageService {
 
+    public SignLanguageInfoResponseDto getSignLanguage(String answer) {
+        try {
+            String searchUrl = "https://sldict.korean.go.kr/front/search/searchAllList.do?searchKeyword=" + answer;
+            Document doc = Jsoup.connect(searchUrl).get();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+
+
+    }
+
+    public String crawlVideoUrls(String searchWord) {
+        try {
+            // 검색 페이지 URL
+            String searchUrl = "https://sldict.korean.go.kr/front/search/searchAllList.do?searchKeyword=" + searchWord;
+
+            // 검색 페이지에서 첫 번째 결과 페이지로 이동
+            Document doc = Jsoup.connect(searchUrl).get();
+            Elements spanElements = doc.select("span[class=tit]");
+            Element spanElement = spanElements.first();
+            Element aElement = spanElement.selectFirst("a");
+            String aElementText = aElement.text().trim();
+            if (!aElementText.contains(searchWord)) {
+                throw new EntityNotFoundException(SIGNLANGUAGE_NOT_FOUND);
+            }
+
+            String href = aElement.attr("href");
+
+            // fnSearchContentsView 인자 추출
+            String[] argsArray = href.split("'");
+            String originNo = argsArray[1];
+            String topCategory = argsArray[2];
+
+            // URL 생성
+            String url = "https://sldict.korean.go.kr/front/sign/signContentsView.do" +
+                    "?origin_no=" + originNo +
+                    "&top_category=" + topCategory +
+                    "&category=" +
+                    "&searchKeyword=" + URLEncoder.encode(searchWord, "UTF-8") +
+                    "&searchCondition=" +
+                    "&search_gubun=" +
+                    "&museum_type=00" +
+                    "&current_pos_index=0";
+
+            // 상세 페이지로 이동하여 수형 설명 & 비디오 URL 추출
+            Document detailDoc = Jsoup.connect(url).get();
+            Elements ddElements = detailDoc.select("dl.content_view_dis > dd");
+            if (ddElements.size() < 2) {
+                System.out.println("Description not found");
+                return null;
+            }
+            Element descriptionElement = ddElements.get(1);
+            String descriptionText = descriptionElement.text();
+            System.out.println("Description: " + descriptionText);
+
+            Elements videoSourceElements = detailDoc.select("#videoArea video source");
+
+            if (!videoSourceElements.isEmpty()) {
+                Element firstSourceElement = videoSourceElements.first();
+                String videoUrl = firstSourceElement.attr("src");
+                return videoUrl;
+            } else {
+                System.out.println("No video sources found");
+                return null;
+            }
+
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
+
+
+

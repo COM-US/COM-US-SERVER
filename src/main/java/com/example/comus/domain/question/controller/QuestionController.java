@@ -23,6 +23,7 @@ public class QuestionController {
     @GetMapping
     public ResponseEntity<SuccessResponse<?>> getQuestion(@UserId Long userId, @RequestParam(value = "category", required = false) Category category) {
         List<QuestionListResponseDto> questionList;
+
         if (category == null) {
             // category 파라미터가 없을 경우 모든 질문을 반환
             questionList = questionService.getAllQuestions(userId);

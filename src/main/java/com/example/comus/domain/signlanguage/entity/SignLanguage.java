@@ -17,6 +17,8 @@ public class SignLanguage{
 
     private String signLanguageName;
 
+    //임시
+    @Column(columnDefinition = "varchar(255) default 'https://github.com/user-attachments/assets/2ddd219f-1f38-4524-97ae-43296fda33b8'")
     private String signLanguageImageUrl;
 
     private String signLanguageVideoUrl;

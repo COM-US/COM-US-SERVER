@@ -1,5 +1,6 @@
 package com.example.comus.domain.answer.service;
 
+import com.example.comus.domain.answer.dto.response.AnswerResponseDto;
 import com.example.comus.domain.answer.dto.request.AnswerRequestDto;
 import com.example.comus.domain.answer.entity.Answer;
 import com.example.comus.domain.question.repository.QuestionRepository;
@@ -12,18 +13,16 @@ import com.example.comus.domain.question.entity.Category;
 import com.example.comus.domain.question.entity.AnswerType;
 import com.example.comus.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static com.example.comus.global.error.ErrorCode.QUESTION_NOT_FOUND;
-import static com.example.comus.global.error.ErrorCode.USER_NOT_FOUND;
+import static com.example.comus.global.error.ErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -105,4 +104,30 @@ public class AnswerService {
         userRepository.saveAll(users);
     }
 
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yy년 MM월 dd일");
+    public List<AnswerResponseDto> getAnswer(Long userId, Long questionId) {
+        List<Answer> answers = answerRepository.findByUserIdAndQuestionId(userId, questionId);
+        if (answers.isEmpty()) {
+            throw new EntityNotFoundException(ANSWER_NOT_FOUND);
+        }
+
+        List<AnswerResponseDto> answerResponseDtos = new ArrayList<>();
+        for (Answer answer : answers) {
+
+            String formattedDate = answer.getCreatedAt().format(DATE_FORMATTER);
+            answerResponseDtos.add(new AnswerResponseDto(
+                    answer.getId(),
+                    answer.getAnswerContent(),
+                    answer.getQuestion().getId(),
+                    formattedDate
+            ));
+        }
+
+        return answerResponseDtos;
+    }
+
+    public int getAnswerCount(Long questionId) {
+        return answerRepository.countByQuestionId(questionId);
+    }
 }

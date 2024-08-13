@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long>{
 
@@ -25,4 +26,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Long>{
     int countByUserAndQuestion(@Param("user") User user, @Param("question") Question question);
 
 
+    List<Answer> findByUserIdAndQuestionId(Long userId, Long questionId);
+
+    int countByQuestionId(Long questionId);
 }
