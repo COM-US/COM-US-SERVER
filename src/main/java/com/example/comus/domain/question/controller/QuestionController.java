@@ -1,6 +1,7 @@
 package com.example.comus.domain.question.controller;
 
 import com.example.comus.domain.question.dto.response.QuestionAndMultipleChoiceResponseDto;
+import com.example.comus.domain.question.dto.response.QuestionListResponseDto;
 import com.example.comus.domain.question.dto.response.QuestionResponseDto;
 import com.example.comus.domain.question.entity.Category;
 import com.example.comus.domain.question.entity.Question;
@@ -20,15 +21,14 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @GetMapping
-    public ResponseEntity<SuccessResponse<?>> getQuestion(@RequestParam(value = "category", required = false) Category category) {
-        List<QuestionResponseDto> questionList;
-
+    public ResponseEntity<SuccessResponse<?>> getQuestion(@UserId Long userId, @RequestParam(value = "category", required = false) Category category) {
+        List<QuestionListResponseDto> questionList;
         if (category == null) {
             // category 파라미터가 없을 경우 모든 질문을 반환
-            questionList = questionService.getAllQuestions();
+            questionList = questionService.getAllQuestions(userId);
         } else {
             // category 파라미터가 있을 경우 해당 카테고리의 질문을 반환
-            questionList = questionService.getQuestions(category);
+            questionList = questionService.getQuestions(category,userId);
         }
 
         return SuccessResponse.ok(questionList);

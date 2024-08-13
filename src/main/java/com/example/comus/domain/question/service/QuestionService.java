@@ -1,9 +1,15 @@
 package com.example.comus.domain.question.service;
 
+import com.example.comus.domain.answer.entity.Answer;
+import com.example.comus.domain.answer.repository.AnswerRepository;
+import com.example.comus.domain.answer.service.AnswerService;
+import com.example.comus.domain.question.dto.response.QuestionListResponseDto;
 import com.example.comus.domain.question.dto.response.QuestionResponseDto;
 import com.example.comus.domain.question.entity.Category;
 import com.example.comus.domain.question.entity.Question;
 import com.example.comus.domain.question.repository.QuestionRepository;
+import com.example.comus.domain.user.entity.User;
+import com.example.comus.domain.user.repository.UserRespository;
 import com.example.comus.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,18 +19,48 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.comus.global.error.ErrorCode.QUESTION_NOT_FOUND;
+import static com.example.comus.global.error.ErrorCode.USER_NOT_FOUND;
 
 @RequiredArgsConstructor
 @Service
 @Transactional
 public class QuestionService {
     private final QuestionRepository questionRepository;
-    public List<QuestionResponseDto> getQuestions(Category category) {
-        return questionRepository.findByCategory(category);
+    private final UserRespository userRepository;
+    private final AnswerRepository answerRepository;
+
+    public List<QuestionListResponseDto> getQuestions(Category category, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        List<Question> questions = questionRepository.findByCategory(category);
+
+        return questions.stream()
+                .map(question -> toQuestionListResponseDto(question, user))
+                .collect(Collectors.toList());
     }
 
-    public List<QuestionResponseDto> getAllQuestions() {
-        return questionRepository.findAllBy();
+    public List<QuestionListResponseDto> getAllQuestions(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        List<Question> questions = questionRepository.findAll();
+
+        return questions.stream()
+                .map(question -> toQuestionListResponseDto(question, user))
+                .collect(Collectors.toList());
+    }
+
+    private QuestionListResponseDto toQuestionListResponseDto(Question question, User user) {
+        int questionCount = answerRepository.countByUserAndQuestion(user, question);
+
+        return new QuestionListResponseDto(
+                question.getId(),
+                question.getCategory(),
+                question.getAnswerType(),
+                question.getQuestionContent(),
+                questionCount
+        );
     }
 
     public List<String> getMultipleChoiceAnswer(Long questionId) {
@@ -38,12 +74,14 @@ public class QuestionService {
     }
 
     public QuestionResponseDto getQuestion(Long questionId) {
+
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
         return new QuestionResponseDto(
                 question.getId(),
                 question.getCategory(),
                 question.getAnswerType(),
                 question.getQuestionContent()
+
         );
     }
 }
