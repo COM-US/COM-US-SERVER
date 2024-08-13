@@ -1,5 +1,6 @@
 package com.example.comus.domain.question.controller;
 
+import com.example.comus.domain.question.dto.response.QuestionAndMultipleChoiceResponseDto;
 import com.example.comus.domain.question.dto.response.QuestionResponseDto;
 import com.example.comus.domain.question.entity.Category;
 import com.example.comus.domain.question.entity.Question;
@@ -35,7 +36,9 @@ public class QuestionController {
 
     @GetMapping("{question_id}/multiple-choice")
     public ResponseEntity<SuccessResponse<?>> getMultipleChoiceAnswer(@PathVariable("question_id") Long questionId) {
+        QuestionResponseDto question = questionService.getQuestion(questionId);
         List<String> answerList = questionService.getMultipleChoiceAnswer(questionId);
-        return SuccessResponse.ok(answerList);
+        QuestionAndMultipleChoiceResponseDto questionAndMultipleChoice = new QuestionAndMultipleChoiceResponseDto(question, answerList);
+        return SuccessResponse.ok(questionAndMultipleChoice);
     }
 }

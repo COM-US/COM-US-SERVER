@@ -6,13 +6,12 @@ import com.example.comus.domain.signlanguage.entity.SignLanguage;
 import com.example.comus.domain.user.entity.User;
 import com.example.comus.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-
+@Builder
+@AllArgsConstructor
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "answer")
@@ -39,5 +38,6 @@ public class Answer extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
 
 }

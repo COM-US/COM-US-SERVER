@@ -1,17 +1,37 @@
 package com.example.comus.domain.answer.service;
 
+import com.example.comus.domain.answer.dto.request.AnswerRequestDto;
+import com.example.comus.domain.answer.entity.Answer;
+import com.example.comus.domain.question.repository.QuestionRepository;
+import com.example.comus.domain.user.repository.UserRespository;
+import com.example.comus.domain.user.entity.User;
+import com.example.comus.domain.question.entity.Question;
 import com.example.comus.domain.answer.repository.AnswerRepository;
 import com.example.comus.domain.answer.dto.response.StatisticResponseDto;
 import com.example.comus.domain.question.entity.Category;
 import com.example.comus.domain.question.entity.AnswerType;
+import com.example.comus.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+
+import static com.example.comus.global.error.ErrorCode.QUESTION_NOT_FOUND;
+import static com.example.comus.global.error.ErrorCode.USER_NOT_FOUND;
 
 @RequiredArgsConstructor
 @Service
 public class AnswerService {
 
     private final AnswerRepository answerRepository;
+    private final UserRespository userRepository;
+    private final QuestionRepository questionRepository;
 
     public StatisticResponseDto getAnswerStatistic(Long userId) {
 
@@ -55,5 +75,34 @@ public class AnswerService {
         return Math.round(result * 10) / 10.0;
     }
 
+
+    public void createAnswer(Long userId, AnswerRequestDto answerRequest) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        user.addChatTime();
+        user.addChatCount();
+        userRepository.save(user);
+
+        Question question = questionRepository.findById(answerRequest.questionId())
+                .orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
+
+        Answer answer = Answer.builder()
+                .user(user)
+                .question(question)
+                .answerContent(answerRequest.answerContent())
+                .build();
+
+        answerRepository.save(answer);
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void resetTodayChatTime() {
+        List<User> users = userRepository.findAll();
+        for (User user : users) {
+            user.resetTodayChatTime();
+        }
+        userRepository.saveAll(users);
+    }
 
 }

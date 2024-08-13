@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 @Getter
 @AllArgsConstructor
@@ -34,4 +35,19 @@ public class User extends BaseTimeEntity {
     private List<Answer> answers;
 
 
+    public void addChatTime() {
+        if (todayChatTime == null) {
+            todayChatTime = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
+        }
+        todayChatTime = todayChatTime.plusMinutes(3);
+        totalChatTime = totalChatTime.plusMinutes(3);
+    }
+
+    public void addChatCount() {
+        totalChatCount++;
+    }
+
+    public void resetTodayChatTime() {
+        todayChatTime = LocalTime.of(0, 0, 0);
+    }
 }

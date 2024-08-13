@@ -36,4 +36,14 @@ public class QuestionService {
                 .collect(Collectors.toList());
 
     }
+
+    public QuestionResponseDto getQuestion(Long questionId) {
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
+        return new QuestionResponseDto(
+                question.getId(),
+                question.getCategory(),
+                question.getAnswerType(),
+                question.getQuestionContent()
+        );
+    }
 }
