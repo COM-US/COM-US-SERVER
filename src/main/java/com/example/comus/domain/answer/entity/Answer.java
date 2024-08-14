@@ -9,11 +9,12 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Table(name = "answer")
 @Entity
 public class Answer extends BaseTimeEntity {
@@ -22,11 +23,8 @@ public class Answer extends BaseTimeEntity {
     private Long id;
 
     private String answerContent;
-/*
-    @OneToOne
-    @JoinColumn(name = "sign_language_id")
-    private SignLanguage signLanguage;
 
+/*
     @OneToOne
     @JoinColumn(name = "block_id")
     private Block block;

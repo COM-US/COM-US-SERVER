@@ -1,6 +1,7 @@
 package com.example.comus.domain.question.entity;
 
 import com.example.comus.domain.answer.entity.Answer;
+import com.example.comus.domain.signlanguage.entity.SignLanguage;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -30,5 +31,6 @@ public class Question  {
     private List<Answer> answers;
 
     private String multipleChoices;
+
 
 }

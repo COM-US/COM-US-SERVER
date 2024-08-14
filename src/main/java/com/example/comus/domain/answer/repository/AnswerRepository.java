@@ -6,10 +6,10 @@ import com.example.comus.domain.question.entity.Category;
 import com.example.comus.domain.question.entity.Question;
 import com.example.comus.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,4 +29,21 @@ public interface AnswerRepository extends JpaRepository<Answer, Long>{
     List<Answer> findByUserIdAndQuestionId(Long userId, Long questionId);
 
     int countByQuestionId(Long questionId);
+
+    @Modifying
+    @Query("UPDATE Block b SET b.level = :level WHERE b.id = :id")
+    void updateLevel(@Param("id") Long id, @Param("level") Integer level);
+
+    List<Answer> findByQuestionId(Long questionId);
+
+    default Optional<Answer> findSecondLatestAnswer() {
+        List<Answer> answers = findAllByOrderByCreatedAtDesc();
+        if (answers.size() < 2) {
+            return Optional.empty();
+        }
+        return Optional.of(answers.get(1));
+    }
+
+    List<Answer> findAllByOrderByCreatedAtDesc();
+
 }

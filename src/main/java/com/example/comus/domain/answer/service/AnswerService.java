@@ -75,7 +75,7 @@ public class AnswerService {
     }
 
 
-    public void createAnswer(Long userId, AnswerRequestDto answerRequest) {
+    public long createAnswer(Long userId, AnswerRequestDto answerRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
 
@@ -93,6 +93,8 @@ public class AnswerService {
                 .build();
 
         answerRepository.save(answer);
+
+        return answer.getId();
     }
 
     @Scheduled(cron = "0 0 0 * * *")

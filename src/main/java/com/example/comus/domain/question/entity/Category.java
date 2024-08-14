@@ -10,7 +10,7 @@ public enum Category implements EnumConverter.KoreanEnum {
     SCHOOL("학교"),
     FRIEND("친구"),
     FAMILY("가족"),
-    HOBBY("취미"),
+    HOBBY("관심사"),
     RANDOM("랜덤");
 
     private final String korean;

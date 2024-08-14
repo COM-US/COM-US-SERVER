@@ -2,13 +2,12 @@ package com.example.comus.domain.block.entity;
 
 import com.example.comus.domain.answer.entity.Answer;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-
+@AllArgsConstructor
+@Builder
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Table(name = "block")
 @Entity
 public class Block  {
@@ -16,7 +15,7 @@ public class Block  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String level;
+    private int level;
 
     private int blockRow;
 
@@ -25,7 +24,6 @@ public class Block  {
     @OneToOne
     @JoinColumn(name = "answer_id")
     private Answer answer;
-
 
 
 }
