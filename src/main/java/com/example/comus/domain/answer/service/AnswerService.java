@@ -107,7 +107,7 @@ public class AnswerService {
     }
 
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yy년 MM월 dd일");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yy.MM.dd");
     public List<AnswerResponseDto> getAnswer(Long userId, Long questionId) {
         List<Answer> answers = answerRepository.findByUserIdAndQuestionId(userId, questionId);
         if (answers.isEmpty()) {
