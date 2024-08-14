@@ -18,9 +18,8 @@ public class SignLanguageController {
 
       @GetMapping
         public ResponseEntity<SuccessResponse<?>> getSignLanguageInfo(@RequestParam String answer) {
-            //SignLanguageInfoResponseDto signLanguageInfo= signLanguageService.getSignLanguage(answer);
-             String signLanguageVideo = signLanguageService.crawlVideoUrls(answer);
-            return SuccessResponse.ok(signLanguageVideo);
+           List<SignLanguageInfoResponseDto> signLanguageInfo= signLanguageService.getSignLanguage(answer);
+            return SuccessResponse.ok(signLanguageInfo);
         }
 
 }

@@ -1,5 +1,8 @@
 package com.example.comus.domain.signlanguage.entity;
 
+import com.example.comus.domain.answer.entity.Answer;
+import com.example.comus.domain.question.entity.Question;
+import com.example.comus.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

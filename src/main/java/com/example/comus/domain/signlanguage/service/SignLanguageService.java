@@ -1,7 +1,10 @@
 package com.example.comus.domain.signlanguage.service;
 
 import com.example.comus.domain.signlanguage.dto.response.SignLanguageInfoResponseDto;
+import com.example.comus.domain.signlanguage.entity.SignLanguage;
+import com.example.comus.domain.signlanguage.repository.SignLanguageRepository;
 import com.example.comus.global.error.exception.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,20 +20,31 @@ import java.util.List;
 
 import static com.example.comus.global.error.ErrorCode.SIGNLANGUAGE_NOT_FOUND;
 
+@AllArgsConstructor
 @Service
 @Transactional
 public class SignLanguageService {
+    private final SignLanguageRepository signLanguageRepository;
 
-    public SignLanguageInfoResponseDto getSignLanguage(String answer) {
-        try {
-            String searchUrl = "https://sldict.korean.go.kr/front/search/searchAllList.do?searchKeyword=" + answer;
-            Document doc = Jsoup.connect(searchUrl).get();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public List<SignLanguageInfoResponseDto> getSignLanguage(String answer) {
+        List<SignLanguageInfoResponseDto> result = new ArrayList<>();
+
+        String[] words = answer.split("\\s+");
+
+        for (String word : words) {
+            List<SignLanguage> signLanguages = signLanguageRepository.findBySignLanguageName(word);
+            for (SignLanguage signLanguage : signLanguages) {
+                SignLanguageInfoResponseDto dto = new SignLanguageInfoResponseDto(
+                        signLanguage.getId(),
+                        signLanguage.getSignLanguageName(),
+                        signLanguage.getSignLanguageVideoUrl(),
+                        signLanguage.getSignLanguageDescription()
+                );
+                result.add(dto);
+            }
         }
-        return null;
 
-
+        return result;
     }
 
     public String crawlVideoUrls(String searchWord) {
@@ -77,21 +91,14 @@ public class SignLanguageService {
             String descriptionText = descriptionElement.text();
             System.out.println("Description: " + descriptionText);
 
-            Elements videoSourceElements = detailDoc.select("#videoArea video source");
-
-            if (!videoSourceElements.isEmpty()) {
-                Element firstSourceElement = videoSourceElements.first();
-                String videoUrl = firstSourceElement.attr("src");
-                return videoUrl;
-            } else {
-                System.out.println("No video sources found");
-                return null;
-            }
-
+            System.out.println(detailDoc.html());
+            Element videoArea = detailDoc.getElementById("videoArea");
+            System.out.println(videoArea.html());
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return null;
     }
 
 }
