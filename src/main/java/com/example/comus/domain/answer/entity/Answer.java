@@ -24,11 +24,9 @@ public class Answer extends BaseTimeEntity {
 
     private String answerContent;
 
-/*
-    @OneToOne
-    @JoinColumn(name = "block_id")
-    private Block block;
-*/
+    @OneToMany
+    private List<Block> blocks;
+
     @ManyToOne
     @JoinColumn(name = "question_id")
     private Question question;

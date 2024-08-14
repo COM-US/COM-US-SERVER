@@ -1,6 +1,7 @@
 package com.example.comus.domain.block.entity;
 
 import com.example.comus.domain.answer.entity.Answer;
+import com.example.comus.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Table(name = "block")
 @Entity
-public class Block  {
+public class Block extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,7 +22,7 @@ public class Block  {
 
     private int blockColumn;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "answer_id")
     private Answer answer;
 

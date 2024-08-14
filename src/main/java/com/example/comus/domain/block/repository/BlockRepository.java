@@ -15,5 +15,7 @@ public interface BlockRepository extends JpaRepository<Block, Long> {
 
     Optional<Block> findByAnswerId(Long answerId);
 
-    boolean existsByLevelAndBlockRowAndBlockColumn(int newLevel, int newRow, int newColumn);
+    Optional<Block> findTopByAnswerIdOrderByCreatedAtDesc(Long answerId);
+
+    List<Block> findByAnswer(Answer answer);
 }

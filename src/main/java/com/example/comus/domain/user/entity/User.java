@@ -50,4 +50,9 @@ public class User extends BaseTimeEntity {
     public void resetTodayChatTime() {
         todayChatTime = LocalTime.of(0, 0, 0);
     }
+
+
+    public List<Answer> getAnswer() {
+        return answers;
+    }
 }

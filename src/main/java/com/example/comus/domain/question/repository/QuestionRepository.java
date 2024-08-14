@@ -15,4 +15,5 @@ public interface QuestionRepository extends JpaRepository<Question, Long>{
     List<Question> findByCategory(Category category);
 
 
+    int countByCategory(Category category);
 }
