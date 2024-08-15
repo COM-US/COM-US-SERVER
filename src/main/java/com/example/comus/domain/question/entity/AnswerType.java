@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum AnswerType implements EnumConverter.KoreanEnum {
-    SENTENCE("문장형"),
+    SENTENCE("대화형"),
     MULTIPLE_CHOICE("선택형");
 
     private final String korean;
