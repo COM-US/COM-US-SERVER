@@ -10,7 +10,7 @@
 | [송은나래](https://github.com/eunarae) | [서묘진](https://github.com/nrj022) | [송하연](https://github.com/hysong4u) | [정수미](https://github.com/learntosurf) |
 | :--------: | :--------: | :--------: | :--------: |
 | <img src="https://github.com/eunarae.png" width="200px"/>  | <img src="https://github.com/nrj022.png" width="200px"/> | <img src="https://github.com/hysong4u.png" width="200px"/> | <img src="https://github.com/learntosurf.png" width="200px"/> 
-| PM, Design | Front-end | Back-end | AI |
+| PM, Design | Android | Server | AI,ML |
 <br>
 
 ## ✴️ 이전 프로젝트 ‘COMMA’ 그리고 ‘COM-US’의 방향성
