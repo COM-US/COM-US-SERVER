@@ -1,11 +1,12 @@
-name: dev CI/CD
+name: Deploy to EC2
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  dev-ci-cd:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,11 +21,6 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-
-    - name: Create application.yml from secret
-      run: |
-        mkdir -p src/main/resources
-        echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
 
     - name: Build with Gradle
       run: ./gradlew clean build -x test
@@ -53,3 +49,12 @@ jobs:
         string: "${{ steps.current-time.outputs.time }}"
         replace-with: '-'
         flags: 'g'
+
+    - name: Deploy to EC2
+      env:
+        PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        SERVER_ADDRESS: ${{ secrets.EC2_SERVER_ADDRESS }}
+      run: |
+        echo "$PRIVATE_KEY" > private_key.pem
+        chmod 600 private_key.pem
+        ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$SERVER_ADDRESS "docker pull hysong4u/com-us-server:latest && docker run -d -p 8080:8080 hysong4u/com-us-server:latest"
