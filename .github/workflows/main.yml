@@ -27,7 +27,7 @@ jobs:
 
     - name: Docker build
       run: |
-        docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+        echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
         docker build -t COM-US-SERVER .
         docker tag COM-US-SERVER hysong4u/COM-US-SERVER:latest
         docker push hysong4u/COM-US-SERVER:latest
