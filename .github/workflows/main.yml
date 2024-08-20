@@ -22,6 +22,12 @@ jobs:
       run: chmod +x gradlew
       # gradlew 파일에 실행 권한 부여
 
+    - name: Create application.yml from secret
+      run: |
+        mkdir -p src/main/resources
+        echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
+      # GitHub Secrets에서 가져온 내용을 application.yml 파일로 생성
+
     - name: Build with Gradle
       run: ./gradlew clean build -x test
 
@@ -35,7 +41,6 @@ jobs:
     - name: Get timestamp
       uses: gerred/actions/current-time@master
       id: current-time
-      # 현재 시간을 가져와 타임스탬프 생성
 
     - name: Run string replace
       uses: frabert/replace-string-action@master
