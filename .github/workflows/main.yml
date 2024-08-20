@@ -20,23 +20,26 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-      # gradlew 파일에 실행 권한 부여
 
     - name: Create application.yml from secret
       run: |
         mkdir -p src/main/resources
         echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
-      # GitHub Secrets에서 가져온 내용을 application.yml 파일로 생성
 
     - name: Build with Gradle
       run: ./gradlew clean build -x test
 
+    - name: Docker login
+      run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+    - name: List files
+      run: ls -la
+
     - name: Docker build
       run: |
-        echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-        docker build -t COM-US-SERVER .
-        docker tag COM-US-SERVER hysong4u/COM-US-SERVER:latest
-        docker push hysong4u/COM-US-SERVER:latest
+        docker build -t com-us-server .
+        docker tag com-us-server hysong4u/com-us-server:latest
+        docker push hysong4u/com-us-server:latest
 
     - name: Get timestamp
       uses: gerred/actions/current-time@master
