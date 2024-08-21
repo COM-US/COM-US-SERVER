@@ -9,11 +9,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    services:
-      docker:
-        image: docker:19.03.12
-        options: --privileged # Docker 권한 문제를 해결할 수 있는 옵션
-
     steps:
     - name: Checkout Latest Repo
       uses: actions/checkout@v3
