@@ -9,6 +9,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    services:
+      docker:
+        image: docker:19.03.12
+        options: --privileged # Docker 권한 문제를 해결할 수 있는 옵션
+
     steps:
     - name: Checkout Latest Repo
       uses: actions/checkout@v3
@@ -32,9 +37,6 @@ jobs:
 
     - name: Docker login
       run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-
-    - name: List files
-      run: ls -la
 
     - name: Docker build
       run: |
