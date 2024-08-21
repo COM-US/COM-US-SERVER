@@ -59,7 +59,10 @@ jobs:
       env:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
         SERVER_ADDRESS: ${{ secrets.EC2_SERVER_ADDRESS }}
-      run: |
-        echo "$PRIVATE_KEY" > private_key.pem
-        chmod 600 private_key.pem
-        ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$SERVER_ADDRESS "docker pull hysong4u/com-us-server:latest && docker run -d -p 8080:8080 hysong4u/com-us-server:latest"
+        run: |
+          echo "$PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$SERVER_ADDRESS << 'EOF'
+            docker pull hysong4u/com-us-server:latest
+            docker run -d -p 8080:8080 hysong4u/com-us-server:latest
+          EOF
