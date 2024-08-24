@@ -35,7 +35,7 @@ public class AnswerController {
     @PostMapping
     public ResponseEntity<?> createAnswer(@UserId Long userId, @RequestBody AnswerRequestDto answerRequest) {
         long anwserId = answerService.createAnswer(userId, answerRequest);
-        blockService.save(anwserId);
+        blockService.save(userId, anwserId);
 
         String answer = answerRequest.answerContent();
         List<SignLanguageInfoResponseDto> signLanguageInfo= signLanguageService.getSignLanguage(answer);

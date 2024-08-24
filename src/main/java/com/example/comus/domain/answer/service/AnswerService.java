@@ -15,6 +15,7 @@ import com.example.comus.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import static com.example.comus.global.error.ErrorCode.*;
 
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class AnswerService {
@@ -74,7 +76,7 @@ public class AnswerService {
         return Math.round(result * 10) / 10.0;
     }
 
-
+    @Transactional
     public long createAnswer(Long userId, AnswerRequestDto answerRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));

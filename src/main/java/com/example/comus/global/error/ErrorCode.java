@@ -12,6 +12,7 @@ public enum ErrorCode {
      * 400 Bad Request
      */
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    BLOCK_IS_INAPPROPRIATE(HttpStatus.BAD_REQUEST, "블록이 적절하지 않습니다"),
     /**
      * 401 Unauthorized
      */

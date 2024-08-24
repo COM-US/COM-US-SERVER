@@ -46,4 +46,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long>{
 
     List<Answer> findAllByOrderByCreatedAtDesc();
 
+    List<Answer> findByUserId(long userId);
 }
