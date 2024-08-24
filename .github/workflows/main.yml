@@ -63,6 +63,7 @@ jobs:
           docker pull hysong4u/com-us-server:latest
           existing_container_id=$(sudo docker ps -q --filter "publish=8080")
           [ -n "$existing_container_id" ] && sudo docker stop $existing_container_id && sudo docker rm $existing_container_id
+          sudo docker image prune -f
           docker run -d -p 8080:8080 hysong4u/com-us-server:latest
         EOF
 
