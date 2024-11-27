@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class HealthCheckApiController {
     @RequestMapping("/")
     public String ComusServer() {
-        return "Hello Comus Server!!!";
+        return "Hello! Comus Server!!!";
     }
 }
