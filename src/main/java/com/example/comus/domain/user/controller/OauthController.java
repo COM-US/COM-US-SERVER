@@ -1,5 +1,6 @@
 package com.example.comus.domain.user.controller;
 
+import com.example.comus.domain.user.dto.response.UserTokenResponseDto;
 import com.example.comus.domain.user.service.OauthService;
 import com.example.comus.domain.user.service.UserService;
 import com.example.comus.global.common.SuccessResponse;
@@ -22,7 +23,9 @@ public class OauthController {
     ResponseEntity<SuccessResponse<?>> googleLogin(@RequestParam String code) {
         Long userId  = oauthService.socialLogin(code);
         String accessToken = userService.issueNewAccessToken(userId);
-        return SuccessResponse.ok(accessToken);
+        String refreshToken = userService.issueNewRefreshToken(userId);
+        UserTokenResponseDto userTokenResponseDto = UserTokenResponseDto.of(accessToken, refreshToken);
+        return SuccessResponse.ok(userTokenResponseDto);
 
     }
 }

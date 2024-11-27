@@ -31,8 +31,9 @@ public class UserService {
 
     public String issueNewAccessToken(Long memberId) {
         return jwtProvider.getIssueToken(memberId, true);
+
     }
-    private String issueNewRefreshToken(Long memberId) {
+    public String issueNewRefreshToken(Long memberId) {
         return jwtProvider.getIssueToken(memberId, false);
     }
 
