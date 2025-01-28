@@ -26,11 +26,12 @@ jobs:
       run: |
         mkdir -p src/main/resources
         echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
-        
-    - name: Create keystore from secret
-      run: |
-        echo "${{ secrets.KEYSTORE }}" > src/main/resources/keystore.p12
 
+    - name: Create keystore from secret and set permissions
+      run: |
+        echo "${{ secrets.KEYSTORE }}" | base64 --decode > src/main/resources/keystore.p12
+        chmod 600 src/main/resources/keystore.p12
+        
     - name: Build with Gradle
       run: ./gradlew clean build -x test
 
