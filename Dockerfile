@@ -12,5 +12,8 @@ COPY ${JAR_FILE_PATH} app.jar
 # application.yml 파일을 컨테이너에 복사
 COPY src/main/resources/application.yml /app/src/main/resources/application.yml
 
+# SSL 인증서 복사
+COPY src/main/resources/keystore.p12 /app/src/main/resources/keystore.p12
+
 # Java 애플리케이션 실행
 ENTRYPOINT ["java", "-jar", "app.jar"]
