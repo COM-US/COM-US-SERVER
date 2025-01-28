@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: CI/CD Workflow for EC2 Deployment
 
 on:
   push:
@@ -6,11 +6,12 @@ on:
       - main
 
 jobs:
-  deploy:
+  ci:
+    name: Build and Test
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Latest Repo
+    - name: Checkout Code
       uses: actions/checkout@v3
 
     - name: Set up JDK 17
@@ -19,43 +20,35 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Grant execute permission for gradlew
+    - name: Grant Execute Permission for Gradlew
       run: chmod +x gradlew
 
-    - name: Create application.yml from secret
+    - name: Create Configurations
       run: |
         mkdir -p src/main/resources
         echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
-
-    - name: Create keystore from secret and set permissions
-      run: |
         echo "${{ secrets.KEYSTORE }}" | base64 --decode > src/main/resources/keystore.p12
-        chmod 600 src/main/resources/keystore.p12
-        
-    - name: Build with Gradle
+
+    - name: Build Project
       run: ./gradlew clean build -x test
 
-    - name: Docker login
+  cd:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    needs: ci
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Docker Login
       run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-    - name: Docker build
+    - name: Build and Push Docker Image
       run: |
         docker build -t com-us-server .
         docker tag com-us-server hysong4u/com-us-server:latest
         docker push hysong4u/com-us-server:latest
-
-    - name: Get timestamp
-      uses: gerred/actions/current-time@master
-      id: current-time
-
-    - name: Run string replace
-      uses: frabert/replace-string-action@master
-      id: format-time
-      with:
-        pattern: '[:\.]+'
-        string: "${{ steps.current-time.outputs.time }}"
-        replace-with: '-'
-        flags: 'g'
 
     - name: Deploy to EC2
       env:
@@ -67,7 +60,10 @@ jobs:
         ssh -T -o StrictHostKeyChecking=no -i private_key.pem ubuntu@$SERVER_ADDRESS << 'EOF'
           docker pull hysong4u/com-us-server:latest
           existing_container_id=$(sudo docker ps -q --filter "publish=443")
-          [ -n "$existing_container_id" ] && sudo docker stop $existing_container_id && sudo docker rm $existing_container_id
+          if [ -n "$existing_container_id" ]; then
+            sudo docker stop $existing_container_id
+            sudo docker rm $existing_container_id
+          fi
           sudo docker image prune -f
           docker run -d -p 443:443 hysong4u/com-us-server:latest
         EOF
@@ -76,4 +72,3 @@ jobs:
         # sudo chmod 660 /var/run/docker.sock
         # sudo /usr/sbin/usermod -aG docker $USER
         # sudo /usr/sbin/usermod -aG docker ubuntu
-      
