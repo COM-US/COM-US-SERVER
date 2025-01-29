@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  CI:
+  CI/CD:
     runs-on: ubuntu-latest
 
     steps:
@@ -31,16 +31,6 @@ jobs:
         echo "${{ secrets.KEYSTORE }}" | base64 --decode > src/main/resources/keystore.p12
         chmod 600 src/main/resources/keystore.p12
         
-    - name: Build with Gradle
-      run: ./gradlew clean build -x test
-      
-  CD:
-    needs : CI
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
     - name: Build with Gradle
       run: ./gradlew clean build -x test
 
