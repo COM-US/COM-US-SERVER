@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,6 +64,16 @@ public class QuestionService {
         );
     }
 
+    public QuestionResponseDto getQuestion(Long questionId) {
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
+        return new QuestionResponseDto(
+                question.getId(),
+                LocalDate.now(),
+                question.getCategory(),
+                question.getAnswerType(),
+                question.getQuestionContent()
+        );
+    }
     public List<String> getMultipleChoiceAnswer(Long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
         String multipleChoices = question.getMultipleChoices();
@@ -71,18 +82,6 @@ public class QuestionService {
                 .map(String::trim)
                 .collect(Collectors.toList());
 
-    }
-
-    public QuestionResponseDto getQuestion(Long questionId) {
-
-        Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
-        return new QuestionResponseDto(
-                question.getId(),
-                question.getCategory(),
-                question.getAnswerType(),
-                question.getQuestionContent()
-
-        );
     }
 
     public QuestionListResponseDto getQuestionAndCount(Long questionId) {

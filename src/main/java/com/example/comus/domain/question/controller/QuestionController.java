@@ -35,6 +35,7 @@ public class QuestionController {
         return SuccessResponse.ok(questionList);
     }
 
+    // 질문 상세 조회 (선택형 답변 조회)
     @GetMapping("{question_id}/multiple-choice")
     public ResponseEntity<SuccessResponse<?>> getMultipleChoiceAnswer(@PathVariable("question_id") Long questionId) {
         QuestionResponseDto question = questionService.getQuestion(questionId);
