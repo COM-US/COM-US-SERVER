@@ -1,5 +1,6 @@
 package com.example.comus.domain.user.service;
 
+import com.example.comus.domain.user.entity.SocialType;
 import com.example.comus.domain.user.entity.User;
 import com.example.comus.domain.user.repository.UserRespository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,37 +21,38 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class OauthService {
-
-    private final UserService userService;
+public class KakaoOauthService {
     private final UserRespository userRepository;
-
-    @Value("${spring.security.oauth2.client.registration.google.client-id}")
-    private String clientId;
-
-    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
-    private String clientSecret;
-
-    @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
-    private String redirectUri;
-
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public Long socialLogin(String code) {
-        //Oauth 토큰
-        String accessToken = getOauthToken(code);
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+    private String clientId;
 
-        //유저 정보
-        JsonNode userResourceNode = getUserResource(accessToken);
-        String name = userResourceNode.get("name").asText();
-        String imageUrl = userResourceNode.get("picture").asText();
-        User user = saveMember(name, imageUrl);
-        return user.getId();
+    @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
+    private String clientSecret;
+
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+    private String redirectUri;
+
+    public Long kakaoLogin(String code) {
+        try {
+            // OAuth 토큰 요청
+            String accessToken = getOauthToken(code);
+
+            // 사용자 정보 요청
+            JsonNode userResourceNode = getUserResource(accessToken);
+            String name = userResourceNode.path("kakao_account").path("profile").path("nickname").asText();
+            String imageUrl = userResourceNode.path("kakao_account").path("profile").path("profile_image_url").asText();
+
+            User user = saveMember(name, imageUrl);
+            return user.getId();
+        } catch (Exception e) {
+            throw new RuntimeException("카카오 로그인 처리 중 오류 발생: " + e.getMessage(), e);
+        }
     }
 
-    // Oauth 토큰 가져오기
-    public String getOauthToken(String code) {
-        String tokenUri = "https://oauth2.googleapis.com/token";
+    private String getOauthToken(String code) {
+        String tokenUri = "https://kauth.kakao.com/oauth/token";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -64,8 +66,10 @@ public class OauthService {
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-        ResponseEntity<Map<String, Object>> responseEntity = restTemplate.exchange(tokenUri, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<>() {
-        });
+        ResponseEntity<Map<String, Object>> responseEntity = restTemplate.exchange(
+                tokenUri, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<>() {}
+        );
+
         Map<String, Object> responseBody = responseEntity.getBody();
         if (responseBody != null && responseBody.containsKey("access_token")) {
             return (String) responseBody.get("access_token");
@@ -74,41 +78,38 @@ public class OauthService {
         }
     }
 
-    // 유저 정보 가져오기
-    public JsonNode getUserResource(String accessToken) {
-        String apiUrl = "https://www.googleapis.com/oauth2/v2/userinfo";
+    private JsonNode getUserResource(String accessToken) {
+        String apiUrl = "https://kapi.kakao.com/v2/user/me";
 
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
-        if (responseEntity.getStatusCode() != HttpStatus.OK) {
-            throw new RuntimeException("ERROR : Failed to retrieve user resource: " + responseEntity.getStatusCode());
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new RuntimeException("ERROR: Failed to retrieve user resource: " + responseEntity.getStatusCode());
         }
 
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode userResourceNode;
         try {
-            userResourceNode = objectMapper.readTree(responseEntity.getBody());
+            return objectMapper.readTree(responseEntity.getBody());
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("ERROR : Failed to parse user resource response", e);
+            throw new RuntimeException("ERROR: Failed to parse user resource response", e);
         }
-        return userResourceNode;
     }
 
-    // 유저 저장
+
     public User saveMember(String name, String imageUrl) {
-        User existUser = userRepository.findByName(name);
+        User existUser = userRepository.findByNameAndSocialType(name, SocialType.KAKAO);
         if (existUser == null) {
             User user = User.builder()
+                    .socialType(SocialType.KAKAO)
                     .name(name)
                     .imageUrl(imageUrl)
                     .build();
             userRepository.save(user);
             return user;
         }
-      return existUser;
+        return existUser;
     }
 }

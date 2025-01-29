@@ -21,6 +21,9 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
+
     private String name;
 
     private String imageUrl;
