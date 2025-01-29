@@ -19,7 +19,6 @@ public class UserController {
     private final UserService userService;
     private final AnswerService answerService;
 
-
     // 임시 발급 API 입니다. 추후 로그인 기능이 완성되면 삭제할 예정입니다
     @PostMapping("/token/{userId}")
     public ResponseEntity<SuccessResponse<?>> getToken(@PathVariable(name = "userId") Long userId) {
