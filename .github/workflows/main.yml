@@ -39,6 +39,9 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
     - name: Docker login
       run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
