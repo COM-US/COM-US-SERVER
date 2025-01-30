@@ -49,7 +49,7 @@ public class AnswerController {
 
     @GetMapping("/{questionId}")
     public ResponseEntity<?> getAnswer(@UserId Long userId, @PathVariable Long questionId) {
-        QuestionListResponseDto question = questionService.getQuestionAndCount(questionId);
+        QuestionListResponseDto question = questionService.getQuestionAndCount(userId, questionId);
         List<AnswerResponseDto> answerlist = answerService.getAnswer(userId, questionId);
         AnswerListResponseDto answerListResponseDto = new AnswerListResponseDto(question, answerlist);
         return SuccessResponse.ok(answerListResponseDto);

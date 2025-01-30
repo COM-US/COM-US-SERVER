@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long>{
@@ -30,21 +31,11 @@ public interface AnswerRepository extends JpaRepository<Answer, Long>{
 
     int countByQuestionId(Long questionId);
 
-    @Modifying
-    @Query("UPDATE Block b SET b.level = :level WHERE b.id = :id")
-    void updateLevel(@Param("id") Long id, @Param("level") Integer level);
-
-    List<Answer> findByQuestionId(Long questionId);
-
-    default Optional<Answer> findSecondLatestAnswer() {
-        List<Answer> answers = findAllByOrderByCreatedAtDesc();
-        if (answers.size() < 2) {
-            return Optional.empty();
-        }
-        return Optional.of(answers.get(1));
-    }
 
     List<Answer> findAllByOrderByCreatedAtDesc();
 
     List<Answer> findByUserId(long userId);
+
+    @Query("SELECT a.question.id, COUNT(DISTINCT a) FROM Answer a WHERE a.user = :user AND a.question IN :questions GROUP BY a.question.id")
+    Map<Long, Integer> countByUserAndQuestions(@Param("user") User user, @Param("questions") List<Question> questions);
 }

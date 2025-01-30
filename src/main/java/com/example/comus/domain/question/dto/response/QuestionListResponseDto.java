@@ -8,6 +8,7 @@ public record QuestionListResponseDto(
         Category category,
         AnswerType answerType,
         String questionContent,
-        int questionCount
+        int answerCount,
+        boolean isLiked
 ) {
 }

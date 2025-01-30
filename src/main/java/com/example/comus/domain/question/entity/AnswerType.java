@@ -1,8 +1,8 @@
 package com.example.comus.domain.question.entity;
 
+import lombok.RequiredArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum AnswerType implements EnumConverter.KoreanEnum {
@@ -19,7 +19,6 @@ public enum AnswerType implements EnumConverter.KoreanEnum {
 
     @JsonCreator
     public static AnswerType fromKorean(String korean) {
-        return new EnumConverter<>(AnswerType.class) {
-        }.fromKorean(korean);
+        return EnumConverter.fromKorean(AnswerType.class, korean);
     }
 }

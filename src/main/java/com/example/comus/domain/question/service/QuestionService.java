@@ -5,10 +5,7 @@ import com.example.comus.domain.answer.repository.AnswerRepository;
 import com.example.comus.domain.answer.service.AnswerService;
 import com.example.comus.domain.question.dto.response.QuestionListResponseDto;
 import com.example.comus.domain.question.dto.response.QuestionResponseDto;
-import com.example.comus.domain.question.entity.AnswerType;
-import com.example.comus.domain.question.entity.Category;
-import com.example.comus.domain.question.entity.Question;
-import com.example.comus.domain.question.entity.QuestionLike;
+import com.example.comus.domain.question.entity.*;
 import com.example.comus.domain.question.repository.QuestionLikeRepository;
 import com.example.comus.domain.question.repository.QuestionRepository;
 import com.example.comus.domain.user.entity.User;
@@ -16,6 +13,7 @@ import com.example.comus.domain.user.repository.UserRespository;
 import com.example.comus.global.error.exception.EntityNotFoundException;
 import com.example.comus.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,37 +32,54 @@ public class QuestionService {
     private final AnswerRepository answerRepository;
     private final QuestionLikeRepository questionLikeRepository;
 
-    public List<QuestionListResponseDto> getQuestions(Category category, Long userId) {
+    public List<QuestionListResponseDto> getQuestionList(Long userId, Category category,  SortType sort) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
 
-        List<Question> questions = questionRepository.findByCategory(category);
+        List<Question> questions = (category == null)
+                ? questionRepository.findAll()
+                : questionRepository.findByCategory(category);
+
+        questions = sortQuestions(user, questions, sort);
 
         return questions.stream()
                 .map(question -> toQuestionListResponseDto(question, user))
                 .collect(Collectors.toList());
     }
 
-    public List<QuestionListResponseDto> getAllQuestions(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+    private List<Question> sortQuestions(User user, List<Question> questions, SortType sortType) {
+        List<Pair<Question, Integer>> questionAnswerCounts = questions.stream()
+                .map(question -> Pair.of(question, answerRepository.countByUserAndQuestion(user, question)))
+                .collect(Collectors.toList());
 
-        List<Question> questions = questionRepository.findAll();
+        questionAnswerCounts.sort((pair1, pair2) -> {
+            int count1 = pair1.getSecond();
+            int count2 = pair2.getSecond();
+            return switch (sortType) {
+                case MOST_CHAT -> Integer.compare(count2, count1);
+                case LEAST_CHAT -> Integer.compare(count1, count2);
+                default -> pair1.getFirst().getId().compareTo(pair2.getFirst().getId());
+            };
+        });
 
-        return questions.stream()
-                .map(question -> toQuestionListResponseDto(question, user))
+        return questionAnswerCounts.stream()
+                .map(Pair::getFirst)
                 .collect(Collectors.toList());
     }
+
+
 
     private QuestionListResponseDto toQuestionListResponseDto(Question question, User user) {
-        int questionCount = answerRepository.countByUserAndQuestion(user, question);
+        int answerCount = answerRepository.countByUserAndQuestion(user, question);
+        boolean isLiked = questionLikeRepository.existsByUserAndQuestion(user, question);
 
         return new QuestionListResponseDto(
                 question.getId(),
                 question.getCategory(),
                 question.getAnswerType(),
                 question.getQuestionContent(),
-                questionCount
+                answerCount,
+                isLiked
         );
     }
 
@@ -91,15 +106,18 @@ public class QuestionService {
 
     }
 
-    public QuestionListResponseDto getQuestionAndCount(Long questionId) {
+    public QuestionListResponseDto getQuestionAndCount(Long userId, Long questionId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
-        int questionCount = answerRepository.countByQuestionId(questionId);
+        int answerCount = answerRepository.countByUserAndQuestion(user, question);
+        boolean isLiked = questionLikeRepository.existsByUserAndQuestion(user, question);
         return new QuestionListResponseDto(
                 question.getId(),
                 question.getCategory(),
                 question.getAnswerType(),
                 question.getQuestionContent(),
-                questionCount
+                answerCount,
+                isLiked
         );
     }
 
