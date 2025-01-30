@@ -47,7 +47,7 @@ public enum ErrorCode {
      * 409 Conflict
      */
     CONFLICT(HttpStatus.CONFLICT, "이미 존재하는 리소스입니다."),
-    QUESTION_ALREADY_LIKED(HttpStatus.CONFLICT, "이미 좋아요를 누른 질문입니다."),
+    QUESTION_ALREADY_LIKED(HttpStatus.CONFLICT, "이미 찜하기를 누른 질문입니다."),
 
     /**
      * 500 Internal Server Error
