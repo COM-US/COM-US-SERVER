@@ -21,6 +21,7 @@ public class OauthController {
     private final KakaoOauthService kakaoOauthService;
     private final UserService userService;
 
+    // 구글 로그인
     @PostMapping("/google-login")
     ResponseEntity<SuccessResponse<?>> googleLogin(@RequestParam String code) {
         Long userId  = googleOauthService.googleLogin(code);
@@ -30,6 +31,7 @@ public class OauthController {
         return SuccessResponse.ok(userTokenResponseDto);
     }
 
+    // 카카오 로그인
     @PostMapping("/kakao-login")
     ResponseEntity<SuccessResponse<?>> kakaoLogin(@RequestParam String code) {
         Long userId  = kakaoOauthService.kakaoLogin(code);
