@@ -37,6 +37,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     SIGNLANGUAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "수화를 찾을 수 없습니다."),
     ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "답변을 찾을 수 없습니다."),
+    QUESTION_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "찜한 질문을 찾을 수 없습니다."),
     /**
      * 405 Method Not Allowed
      */
@@ -46,6 +47,7 @@ public enum ErrorCode {
      * 409 Conflict
      */
     CONFLICT(HttpStatus.CONFLICT, "이미 존재하는 리소스입니다."),
+    QUESTION_ALREADY_LIKED(HttpStatus.CONFLICT, "이미 좋아요를 누른 질문입니다."),
 
     /**
      * 500 Internal Server Error

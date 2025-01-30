@@ -5,12 +5,16 @@ import com.example.comus.domain.answer.repository.AnswerRepository;
 import com.example.comus.domain.answer.service.AnswerService;
 import com.example.comus.domain.question.dto.response.QuestionListResponseDto;
 import com.example.comus.domain.question.dto.response.QuestionResponseDto;
+import com.example.comus.domain.question.entity.AnswerType;
 import com.example.comus.domain.question.entity.Category;
 import com.example.comus.domain.question.entity.Question;
+import com.example.comus.domain.question.entity.QuestionLike;
+import com.example.comus.domain.question.repository.QuestionLikeRepository;
 import com.example.comus.domain.question.repository.QuestionRepository;
 import com.example.comus.domain.user.entity.User;
 import com.example.comus.domain.user.repository.UserRespository;
 import com.example.comus.global.error.exception.EntityNotFoundException;
+import com.example.comus.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +23,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.comus.global.error.ErrorCode.QUESTION_NOT_FOUND;
-import static com.example.comus.global.error.ErrorCode.USER_NOT_FOUND;
+import static com.example.comus.global.error.ErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -29,6 +32,7 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final UserRespository userRepository;
     private final AnswerRepository answerRepository;
+    private final QuestionLikeRepository questionLikeRepository;
 
     public List<QuestionListResponseDto> getQuestions(Category category, Long userId) {
         User user = userRepository.findById(userId)
@@ -77,6 +81,9 @@ public class QuestionService {
     public List<String> getMultipleChoiceAnswer(Long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
         String multipleChoices = question.getMultipleChoices();
+        if (multipleChoices == null) {
+            return null;
+        }
         return List.of(multipleChoices.split(","))
                 .stream()
                 .map(String::trim)
@@ -94,5 +101,30 @@ public class QuestionService {
                 question.getQuestionContent(),
                 questionCount
         );
+    }
+
+    public void likeQuestion(Long userId, Long questionId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
+
+        if (questionLikeRepository.existsByUserAndQuestion(user, question)) {
+            throw new InvalidValueException(QUESTION_ALREADY_LIKED);
+        }
+
+        QuestionLike questionLike = QuestionLike.builder()
+                .user(user)
+                .question(question)
+                .build();
+        questionLikeRepository.save(questionLike);
+    }
+
+    public void unlikeQuestion(Long userId, Long questionId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
+
+        QuestionLike questionLike = questionLikeRepository.findByUserAndQuestion(user, question)
+                .orElseThrow(() -> new EntityNotFoundException(QUESTION_LIKE_NOT_FOUND));
+
+        questionLikeRepository.delete(questionLike);
     }
 }
