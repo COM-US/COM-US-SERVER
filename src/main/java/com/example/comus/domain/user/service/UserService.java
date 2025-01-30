@@ -3,7 +3,7 @@ package com.example.comus.domain.user.service;
 import com.example.comus.domain.answer.entity.Answer;
 import com.example.comus.domain.block.entity.Block;
 import com.example.comus.domain.block.repository.BlockRepository;
-import com.example.comus.domain.question.entity.Category;
+import com.example.comus.domain.question.entity.QuestionCategory;
 import com.example.comus.domain.question.repository.QuestionRepository;
 import com.example.comus.domain.user.dto.response.*;
 import com.example.comus.domain.user.entity.User;
@@ -89,28 +89,28 @@ public class UserService {
 
         List<Answer> answers = user.getAnswers();
 
-        int dailyCount = calculateUniqueQuestionCountByCategory(answers, Category.DAILY);
-        int dailyTotalCount = getTotalCountByCategory(Category.DAILY);
+        int dailyCount = calculateUniqueQuestionCountByCategory(answers, QuestionCategory.DAILY);
+        int dailyTotalCount = getTotalCountByCategory(QuestionCategory.DAILY);
         int dailyPercent = calculatePercentage(dailyCount, dailyTotalCount);
 
-        int schoolCount = calculateUniqueQuestionCountByCategory(answers, Category.SCHOOL);
-        int schoolTotalCount = getTotalCountByCategory(Category.SCHOOL);
+        int schoolCount = calculateUniqueQuestionCountByCategory(answers, QuestionCategory.SCHOOL);
+        int schoolTotalCount = getTotalCountByCategory(QuestionCategory.SCHOOL);
         int schoolPercent = calculatePercentage(schoolCount, schoolTotalCount);
 
-        int friendCount = calculateUniqueQuestionCountByCategory(answers, Category.FRIEND);
-        int friendTotalCount = getTotalCountByCategory(Category.FRIEND);
+        int friendCount = calculateUniqueQuestionCountByCategory(answers, QuestionCategory.FRIEND);
+        int friendTotalCount = getTotalCountByCategory(QuestionCategory.FRIEND);
         int friendPercent = calculatePercentage(friendCount, friendTotalCount);
 
-        int familyCount = calculateUniqueQuestionCountByCategory(answers, Category.FAMILY);
-        int familyTotalCount = getTotalCountByCategory(Category.FAMILY);
+        int familyCount = calculateUniqueQuestionCountByCategory(answers, QuestionCategory.FAMILY);
+        int familyTotalCount = getTotalCountByCategory(QuestionCategory.FAMILY);
         int familyPercent = calculatePercentage(familyCount, familyTotalCount);
 
-        int hobbyCount = calculateUniqueQuestionCountByCategory(answers, Category.HOBBY);
-        int hobbyTotalCount = getTotalCountByCategory(Category.HOBBY);
+        int hobbyCount = calculateUniqueQuestionCountByCategory(answers, QuestionCategory.HOBBY);
+        int hobbyTotalCount = getTotalCountByCategory(QuestionCategory.HOBBY);
         int hobbyPercent = calculatePercentage(hobbyCount, hobbyTotalCount);
 
-        int randomCount = calculateUniqueQuestionCountByCategory(answers, Category.RANDOM);
-        int randomTotalCount = getTotalCountByCategory(Category.RANDOM);
+        int randomCount = calculateUniqueQuestionCountByCategory(answers, QuestionCategory.RANDOM);
+        int randomTotalCount = getTotalCountByCategory(QuestionCategory.RANDOM);
         int randomPercent = calculatePercentage(randomCount, randomTotalCount);
 
         return CategoryResponseDto.builder()
@@ -135,7 +135,7 @@ public class UserService {
                 .build();
     }
 
-    private int calculateUniqueQuestionCountByCategory(List<Answer> answers, Category category) {
+    private int calculateUniqueQuestionCountByCategory(List<Answer> answers, QuestionCategory category) {
         return (int) answers.stream()
                 .map(Answer::getQuestion)
                 .filter(question -> question.getCategory() == category)
@@ -143,7 +143,7 @@ public class UserService {
                 .count();
     }
 
-    private int getTotalCountByCategory(Category category) {
+    private int getTotalCountByCategory(QuestionCategory category) {
         return questionRepository.countByCategory(category);
     }
 

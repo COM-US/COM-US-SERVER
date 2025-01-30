@@ -9,7 +9,7 @@ import com.example.comus.domain.user.entity.User;
 import com.example.comus.domain.question.entity.Question;
 import com.example.comus.domain.answer.repository.AnswerRepository;
 import com.example.comus.domain.answer.dto.response.StatisticResponseDto;
-import com.example.comus.domain.question.entity.Category;
+import com.example.comus.domain.question.entity.QuestionCategory;
 import com.example.comus.domain.question.entity.AnswerType;
 import com.example.comus.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +64,7 @@ public class AnswerService {
 
     private double getRatio(String input, long totalAnswerCnt, String type, Long userId) {
         long count = switch (type) {
-            case "category" -> answerRepository.countByUserIdAndCategory(userId, Category.valueOf(input));
+            case "category" -> answerRepository.countByUserIdAndCategory(userId, QuestionCategory.valueOf(input));
             case "answerType" -> answerRepository.countByUserIdAndAnswerType(userId, AnswerType.valueOf(input));
             default -> throw new IllegalArgumentException("Invalid type: " + type);
         };

@@ -1,14 +1,14 @@
 package com.example.comus.domain.user.dto.response;
 
 import com.example.comus.domain.block.entity.Block;
-import com.example.comus.domain.question.entity.Category;
+import com.example.comus.domain.question.entity.QuestionCategory;
 import lombok.Builder;
 
 @Builder
 public record BlockResponseDto(
         Long id,
         int level,
-        Category category,
+        QuestionCategory category,
         int blockRow,
         int blockColumn
 ) {

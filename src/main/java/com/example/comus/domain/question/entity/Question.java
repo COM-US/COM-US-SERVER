@@ -20,7 +20,7 @@ public class Question  {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private QuestionCategory category;
 
     private String questionContent;
 

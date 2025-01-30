@@ -5,8 +5,8 @@ import com.example.comus.domain.answer.repository.AnswerRepository;
 import com.example.comus.domain.block.entity.Block;
 import com.example.comus.domain.block.entity.BlockShape;
 import com.example.comus.domain.block.repository.BlockRepository;
-import com.example.comus.domain.question.entity.Category;
 import com.example.comus.domain.question.entity.Question;
+import com.example.comus.domain.question.entity.QuestionCategory;
 import com.example.comus.domain.question.repository.QuestionRepository;
 import com.example.comus.global.error.ErrorCode;
 import com.example.comus.global.error.exception.EntityNotFoundException;
@@ -183,7 +183,7 @@ public class BlockService {
         return rotatedShape;
     }
 
-    private int getBlockCountByCategory(Category category) {
+    private int getBlockCountByCategory(QuestionCategory category) {
         return switch (category) {
             case DAILY -> 1;
             case HOBBY -> 2;
