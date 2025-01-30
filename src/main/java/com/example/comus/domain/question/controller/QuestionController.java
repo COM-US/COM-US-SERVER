@@ -43,4 +43,18 @@ public class QuestionController {
         QuestionAndMultipleChoiceResponseDto questionAndMultipleChoice = new QuestionAndMultipleChoiceResponseDto(question, answerList);
         return SuccessResponse.ok(questionAndMultipleChoice);
     }
+
+    // 질문 찜하기
+    @PostMapping("{question_id}/like")
+    public ResponseEntity<SuccessResponse<?>> likeQuestion(@UserId Long userId, @PathVariable("question_id") Long questionId) {
+        questionService.likeQuestion(userId, questionId);
+        return SuccessResponse.created(null);
+    }
+
+    // 질문 찜하기 취소
+    @PostMapping("{question_id}/unlike")
+    public ResponseEntity<SuccessResponse<?>> unlikeQuestion(@UserId Long userId, @PathVariable("question_id") Long questionId) {
+        questionService.unlikeQuestion(userId, questionId);
+        return SuccessResponse.ok(null);
+    }
 }
