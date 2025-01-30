@@ -1,24 +1,21 @@
 package com.example.comus.domain.question.entity;
 
-import lombok.RequiredArgsConstructor;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-@RequiredArgsConstructor
-public enum AnswerType implements EnumConverter.KoreanEnum {
+public enum AnswerType{
     SENTENCE("대화형"),
     MULTIPLE_CHOICE("선택형");
 
     private final String korean;
 
-    @Override
-    @JsonValue
-    public String getKorean() {
-        return korean;
+    AnswerType(String korean) {
+        this.korean = korean;
     }
 
-    @JsonCreator
-    public static AnswerType fromKorean(String korean) {
-        return EnumConverter.fromKorean(AnswerType.class, korean);
+    public static AnswerType fromString(String source) {
+        for (AnswerType answerType : AnswerType.values()) {
+            if (answerType.name().equals(source)) {
+                return answerType;
+            }
+        }
+        return null;
     }
 }
