@@ -2,9 +2,7 @@ package com.example.comus.domain.question.entity;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public enum Category implements EnumConverter.KoreanEnum {
     DAILY("일상"),
     SCHOOL("학교"),
@@ -14,6 +12,11 @@ public enum Category implements EnumConverter.KoreanEnum {
     RANDOM("랜덤");
 
     private final String korean;
+
+    Category(String korean) {
+        this.korean = korean;
+    }
+
     @Override
     @JsonValue
     public String getKorean() {
@@ -22,7 +25,6 @@ public enum Category implements EnumConverter.KoreanEnum {
 
     @JsonCreator
     public static Category fromKorean(String korean) {
-        return new EnumConverter<>(Category.class) {
-        }.fromKorean(korean);
+        return EnumConverter.fromKorean(Category.class, korean);
     }
 }
