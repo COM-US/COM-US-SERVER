@@ -4,7 +4,7 @@ import com.example.comus.domain.question.dto.response.QuestionAndMultipleChoiceR
 import com.example.comus.domain.question.dto.response.QuestionListResponseDto;
 import com.example.comus.domain.question.dto.response.QuestionResponseDto;
 import com.example.comus.domain.question.entity.Category;
-import com.example.comus.domain.question.entity.Question;
+import com.example.comus.domain.question.entity.SortType;
 import com.example.comus.domain.question.service.QuestionService;
 import com.example.comus.global.common.SuccessResponse;
 import com.example.comus.global.config.auth.UserId;
@@ -20,18 +20,14 @@ import java.util.List;
 public class QuestionController {
     private final QuestionService questionService;
 
+    // 카테고리별 질문리스트 조회
     @GetMapping
-    public ResponseEntity<SuccessResponse<?>> getQuestion(@UserId Long userId, @RequestParam(value = "category", required = false) Category category) {
-        List<QuestionListResponseDto> questionList;
-
-        if (category == null) {
-            // category 파라미터가 없을 경우 모든 질문을 반환
-            questionList = questionService.getAllQuestions(userId);
-        } else {
-            // category 파라미터가 있을 경우 해당 카테고리의 질문을 반환
-            questionList = questionService.getQuestions(category,userId);
-        }
-
+    public ResponseEntity<SuccessResponse<?>> getQuestion(
+            @UserId Long userId,
+            @RequestParam(value = "category", required = false, defaultValue = "") Category category,
+            @RequestParam(value = "sort", required = false, defaultValue = "DEFAULT") SortType sort
+    ) {
+        List<QuestionListResponseDto> questionList = questionService.getQuestionList(userId, category, sort);
         return SuccessResponse.ok(questionList);
     }
 
