@@ -19,11 +19,9 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         
-    - name: PR 소스 브랜치명 확인
-      if: github.event_name == 'pull_request'
+    - name: 브랜치명 확인
       run: |
-        echo "PR 브랜치명: $GITHUB_HEAD_REF"
-
+        echo "브랜치명: ${GITHUB_REF#refs/heads/}"
 
 
     - name: Grant execute permission for gradlew
