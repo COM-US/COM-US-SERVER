@@ -18,6 +18,10 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+        
+    - name: 브랜치명 추출
+      run: |
+        echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
