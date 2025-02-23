@@ -20,9 +20,9 @@ jobs:
         distribution: 'temurin'
         
     - name: PR 소스 브랜치명 확인
-    if: github.event_name == 'pull_request'
-    run: |
-      echo "PR 브랜치명: $GITHUB_HEAD_REF"
+      if: github.event_name == 'pull_request'
+      run: |
+        echo "PR 브랜치명: $GITHUB_HEAD_REF"
 
 
 
