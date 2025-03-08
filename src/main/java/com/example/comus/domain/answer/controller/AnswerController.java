@@ -47,6 +47,8 @@ public class AnswerController {
         return SuccessResponse.ok(signLanguageInfoAndDate);
     }
 
+
+    //이전 답변 보기 페이지 조회
     @GetMapping("/{questionId}")
     public ResponseEntity<?> getAnswer(@UserId Long userId, @PathVariable Long questionId) {
         QuestionListResponseDto question = questionService.getQuestionAndCount(userId, questionId);

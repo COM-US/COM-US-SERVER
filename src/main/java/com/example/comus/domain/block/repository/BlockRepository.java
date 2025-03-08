@@ -12,10 +12,7 @@ import java.util.Optional;
 
 public interface BlockRepository extends JpaRepository<Block, Long> {
 
-    Optional<Block> findTopByAnswerIdOrderByCreatedAtDesc(Long answerId);
-
     List<Block> findByAnswer(Answer answer);
-    Optional<Block> findByAnswerId(Long answerId);
 
     List<Block> findByAnswerIn(List<Answer> answers);
 }

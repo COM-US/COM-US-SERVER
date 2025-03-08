@@ -54,25 +54,12 @@ public class UserService {
 
     public UserInfoResponseDto getUserInfo(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        return UserInfoResponseDto.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .imageUrl(user.getImageUrl())
-                .todayChatTime(user.getTodayChatTime())
-                .totalChatTime(user.getTotalChatTime())
-                .totalChatCount(user.getTotalChatCount())
-                .build();
+        return UserInfoResponseDto.from(user);
     }
 
     public MainPageUserresponseDto getMainPageUserInfo(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        return MainPageUserresponseDto.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .imageUrl(user.getImageUrl())
-                .todayChatTime(user.getTodayChatTime())
-                .build(
-                );
+        return MainPageUserresponseDto.from(user);
     }
 
     public List<BlockResponseDto> getBlockList(Long userId) {
@@ -122,26 +109,14 @@ public class UserService {
         int randomTotalCount = getTotalCountByCategory(QuestionCategory.RANDOM);
         int randomPercent = calculatePercentage(randomCount, randomTotalCount);
 
-        return CategoryResponseDto.builder()
-                .DailyCount(dailyCount)
-                .DailyTotalCount(dailyTotalCount)
-                .DailyPercent(dailyPercent)
-                .SchoolCount(schoolCount)
-                .SchoolTotalCount(schoolTotalCount)
-                .SchoolPercent(schoolPercent)
-                .FriendCount(friendCount)
-                .FriendTotalCount(friendTotalCount)
-                .FriendPercent(friendPercent)
-                .FamilyCount(familyCount)
-                .FamilyTotalCount(familyTotalCount)
-                .FamilyPercent(familyPercent)
-                .HobbyCount(hobbyCount)
-                .HobbyTotalCount(hobbyTotalCount)
-                .HobbyPercent(hobbyPercent)
-                .RandomCount(randomCount)
-                .RandomTotalCount(randomTotalCount)
-                .RandomPercent(randomPercent)
-                .build();
+        return CategoryResponseDto.from(
+                dailyCount, dailyTotalCount, dailyPercent,
+                schoolCount, schoolTotalCount, schoolPercent,
+                friendCount, friendTotalCount, friendPercent,
+                familyCount, familyTotalCount, familyPercent,
+                hobbyCount, hobbyTotalCount, hobbyPercent,
+                randomCount, randomTotalCount, randomPercent
+        );
     }
 
     private int calculateUniqueQuestionCountByCategory(List<Answer> answers, QuestionCategory category) {

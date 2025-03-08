@@ -1,5 +1,6 @@
 package com.example.comus.domain.user.dto.response;
 
+import com.example.comus.domain.user.entity.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,4 +16,14 @@ public record UserInfoResponseDto(
         int totalChatCount
 
 ) {
+    public static UserInfoResponseDto from(User user){
+        return UserInfoResponseDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .imageUrl(user.getImageUrl())
+                .todayChatTime(user.getTodayChatTime())
+                .totalChatTime(user.getTotalChatTime())
+                .totalChatCount(user.getTotalChatCount())
+                .build();
+    }
 }
