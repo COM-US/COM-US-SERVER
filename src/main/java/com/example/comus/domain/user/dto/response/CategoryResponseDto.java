@@ -28,4 +28,26 @@ public record CategoryResponseDto(
         int RandomTotalCount,
         int RandomPercent
 ) {
+    public static CategoryResponseDto from(int dailyCount, int dailyTotalCount, int dailyPercent, int schoolCount, int schoolTotalCount, int schoolPercent, int friendCount, int friendTotalCount, int friendPercent, int familyCount, int familyTotalCount, int familyPercent, int hobbyCount, int hobbyTotalCount, int hobbyPercent, int randomCount, int randomTotalCount, int randomPercent) {
+        return CategoryResponseDto.builder()
+                .DailyCount(dailyCount)
+                .DailyTotalCount(dailyTotalCount)
+                .DailyPercent(dailyPercent)
+                .SchoolCount(schoolCount)
+                .SchoolTotalCount(schoolTotalCount)
+                .SchoolPercent(schoolPercent)
+                .FriendCount(friendCount)
+                .FriendTotalCount(friendTotalCount)
+                .FriendPercent(friendPercent)
+                .FamilyCount(familyCount)
+                .FamilyTotalCount(familyTotalCount)
+                .FamilyPercent(familyPercent)
+                .HobbyCount(hobbyCount)
+                .HobbyTotalCount(hobbyTotalCount)
+                .HobbyPercent(hobbyPercent)
+                .RandomCount(randomCount)
+                .RandomTotalCount(randomTotalCount)
+                .RandomPercent(randomPercent)
+                .build();
+    }
 }

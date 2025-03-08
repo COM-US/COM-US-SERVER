@@ -108,30 +108,16 @@ public class AnswerService {
         userRepository.saveAll(users);
     }
 
-
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yy.MM.dd");
+
+    //이전 답변 보기 페이지 조회
     public List<AnswerResponseDto> getAnswer(Long userId, Long questionId) {
         List<Answer> answers = answerRepository.findByUserIdAndQuestionId(userId, questionId);
-        if (answers.isEmpty()) {
-            throw new EntityNotFoundException(ANSWER_NOT_FOUND);
-        }
+        if (answers.isEmpty()) {throw new EntityNotFoundException(ANSWER_NOT_FOUND);}
 
-        List<AnswerResponseDto> answerResponseDtos = new ArrayList<>();
-        for (Answer answer : answers) {
-
-            String formattedDate = answer.getCreatedAt().format(DATE_FORMATTER);
-            answerResponseDtos.add(new AnswerResponseDto(
-                    answer.getId(),
-                    answer.getAnswerContent(),
-                    answer.getQuestion().getId(),
-                    formattedDate
-            ));
-        }
-
-        return answerResponseDtos;
+        return answers.stream()
+                .map(answer -> AnswerResponseDto.from(answer, answer.getCreatedAt().format(DATE_FORMATTER)))
+                .toList();
     }
 
-    public int getAnswerCount(Long questionId) {
-        return answerRepository.countByQuestionId(questionId);
-    }
 }

@@ -33,6 +33,7 @@ public class QuestionService {
     private final AnswerRepository answerRepository;
     private final QuestionLikeRepository questionLikeRepository;
 
+    // 카테고리별 질문리스트 조회
     public List<QuestionListResponseDto> getQuestionList(Long userId, QuestionCategory category,  SortType sort) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
@@ -68,32 +69,18 @@ public class QuestionService {
                 .collect(Collectors.toList());
     }
 
-
-
     private QuestionListResponseDto toQuestionListResponseDto(Question question, User user) {
         int answerCount = answerRepository.countByUserAndQuestion(user, question);
         boolean isLiked = questionLikeRepository.existsByUserAndQuestion(user, question);
 
-        return new QuestionListResponseDto(
-                question.getId(),
-                question.getCategory(),
-                question.getAnswerType(),
-                question.getQuestionContent(),
-                answerCount,
-                isLiked
-        );
+        return QuestionListResponseDto.from(question, answerCount, isLiked);
     }
 
     public QuestionResponseDto getQuestion(Long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
-        return new QuestionResponseDto(
-                question.getId(),
-                LocalDate.now(),
-                question.getCategory(),
-                question.getAnswerType(),
-                question.getQuestionContent()
-        );
+        return QuestionResponseDto.from(question);
     }
+
     public List<String> getMultipleChoiceAnswer(Long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
         String multipleChoices = question.getMultipleChoices();
@@ -112,14 +99,7 @@ public class QuestionService {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
         int answerCount = answerRepository.countByUserAndQuestion(user, question);
         boolean isLiked = questionLikeRepository.existsByUserAndQuestion(user, question);
-        return new QuestionListResponseDto(
-                question.getId(),
-                question.getCategory(),
-                question.getAnswerType(),
-                question.getQuestionContent(),
-                answerCount,
-                isLiked
-        );
+        return QuestionListResponseDto.from(question, answerCount, isLiked);
     }
 
     public void likeQuestion(Long userId, Long questionId) {
