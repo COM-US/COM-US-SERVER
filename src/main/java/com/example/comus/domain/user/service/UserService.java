@@ -5,6 +5,7 @@ import com.example.comus.domain.block.entity.Block;
 import com.example.comus.domain.block.repository.BlockRepository;
 import com.example.comus.domain.question.entity.QuestionCategory;
 import com.example.comus.domain.question.repository.QuestionRepository;
+import com.example.comus.domain.user.dto.request.LoginRequestDto;
 import com.example.comus.domain.user.dto.response.*;
 import com.example.comus.domain.user.entity.User;
 import com.example.comus.domain.user.repository.UserRespository;
@@ -31,8 +32,8 @@ public class UserService {
 
     public String issueNewAccessToken(Long memberId) {
         return jwtProvider.getIssueToken(memberId, true);
-
     }
+
     public String issueNewRefreshToken(Long memberId) {
         return jwtProvider.getIssueToken(memberId, false);
     }
@@ -41,6 +42,14 @@ public class UserService {
         String accessToken = issueNewAccessToken(userId);
         String refreshToken = issueNewRefreshToken(userId);
         return UserTokenResponseDto.of(accessToken, refreshToken);
+    }
+
+    // 로그인
+    @Transactional
+    public UserTokenResponseDto login(LoginRequestDto loginRequest) {
+        User user = userRepository.findBySocialIdAndSocialType(loginRequest.socialId(), loginRequest.socialType())
+                .orElseGet(() -> userRepository.save(loginRequest.toEntity()));
+        return getToken(user.getId());
     }
 
     public UserInfoResponseDto getUserInfo(Long userId) {
@@ -63,7 +72,7 @@ public class UserService {
                 .imageUrl(user.getImageUrl())
                 .todayChatTime(user.getTodayChatTime())
                 .build(
-        );
+                );
     }
 
     public List<BlockResponseDto> getBlockList(Long userId) {
@@ -150,6 +159,5 @@ public class UserService {
     private int calculatePercentage(int count, int totalCount) {
         return totalCount > 0 ? (count * 100) / totalCount : 0;
     }
-
 
 }

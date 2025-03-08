@@ -2,6 +2,7 @@ package com.example.comus.domain.user.controller;
 
 import com.example.comus.domain.answer.dto.response.StatisticResponseDto;
 import com.example.comus.domain.answer.service.AnswerService;
+import com.example.comus.domain.user.dto.request.LoginRequestDto;
 import com.example.comus.domain.user.dto.response.*;
 import com.example.comus.domain.user.service.UserService;
 import com.example.comus.global.common.SuccessResponse;
@@ -22,8 +23,15 @@ public class UserController {
     // 임시 토큰 발급
     @PostMapping("/token/{userId}")
     public ResponseEntity<SuccessResponse<?>> getToken(@PathVariable(name = "userId") Long userId) {
-        final UserTokenResponseDto userTokenResponseDto = userService.getToken(userId);
-        return SuccessResponse.created(userTokenResponseDto);
+        final UserTokenResponseDto userTokenResponse = userService.getToken(userId);
+        return SuccessResponse.created(userTokenResponse);
+    }
+
+    // 로그인
+    @PostMapping("/login")
+    ResponseEntity<SuccessResponse<?>> login(@RequestBody LoginRequestDto loginRequest) {
+        UserTokenResponseDto userToken = userService.login(loginRequest);
+        return SuccessResponse.ok(userToken);
     }
 
     @GetMapping("/mypage")

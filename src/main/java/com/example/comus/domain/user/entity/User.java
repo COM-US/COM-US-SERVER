@@ -24,6 +24,8 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
+    private String socialId;
+
     private String name;
 
     private String imageUrl;
@@ -55,7 +57,6 @@ public class User extends BaseTimeEntity {
     public void resetTodayChatTime() {
         todayChatTime = LocalTime.of(0, 0, 0);
     }
-
 
     public List<Answer> getAnswer() {
         return answers;
