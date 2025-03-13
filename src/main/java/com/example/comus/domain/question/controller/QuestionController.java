@@ -33,12 +33,24 @@ public class QuestionController {
 
     // 질문 상세 조회 (선택형 답변 조회)
     @GetMapping("{question_id}/multiple-choice")
-    public ResponseEntity<SuccessResponse<?>> getMultipleChoiceAnswer(@PathVariable("question_id") Long questionId) {
+    public ResponseEntity<SuccessResponse<?>> getMultipleChoiceAnswer(@PathVariable(value = "question_id") Long questionId) {
         QuestionResponseDto question = questionService.getQuestion(questionId);
         List<String> answerList = questionService.getMultipleChoiceAnswer(questionId);
         QuestionAndMultipleChoiceResponseDto questionAndMultipleChoice = new QuestionAndMultipleChoiceResponseDto(question, answerList);
         return SuccessResponse.ok(questionAndMultipleChoice);
     }
+
+    // 질문 상세 조회 (랜덤 선택형 답변 조회)
+    @GetMapping("/multiple-choice")
+    public ResponseEntity<SuccessResponse<?>> getRandomMultipleChoiceAnswer() {
+        Long questionId = questionService.getRandomQuestionId();
+        QuestionResponseDto question = questionService.getQuestion(questionId);
+        List<String> answerList = questionService.getMultipleChoiceAnswer(questionId);
+        QuestionAndMultipleChoiceResponseDto questionAndMultipleChoice = new QuestionAndMultipleChoiceResponseDto(question, answerList);
+        return SuccessResponse.ok(questionAndMultipleChoice);
+    }
+
+
 
     // 질문 찜하기
     @PostMapping("{question_id}/like")
