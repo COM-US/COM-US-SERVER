@@ -1,10 +1,15 @@
 package com.example.comus.domain.block.entity;
 
-import com.example.comus.domain.question.entity.QuestionCategory;
+
 import com.example.comus.domain.user.entity.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@Builder
 @Getter
 @NoArgsConstructor
 @Table(name = "block_count")
@@ -24,19 +29,10 @@ public class BlockCount {
     @JoinColumn(name = "user_id")
     private User user;
 
-    void addBlockCount(QuestionCategory category){
-        switch(category){
-            case DAILY:
-                DailyCount++; break;
-            case SCHOOL:
-                SchoolCount++; break;
-            case FRIEND:
-                FriendCount++; break;
-            case FAMILY:
-                FamilyCount++; break;
-            case HOBBY:
-                HobbyCount++; break;
-        }
-    }
+    public void addDailyBlockCount() {DailyCount++;}
+    public void addSchoolBlockCount() {SchoolCount++;}
+    public void addFriendBlockCount() {FriendCount++;}
+    public void addFamilyBlockCount() {FamilyCount++;}
+    public void addHobbyBlockCount() {HobbyCount++;}
 
 }

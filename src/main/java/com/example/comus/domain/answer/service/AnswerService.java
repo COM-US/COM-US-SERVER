@@ -3,6 +3,8 @@ package com.example.comus.domain.answer.service;
 import com.example.comus.domain.answer.dto.response.AnswerResponseDto;
 import com.example.comus.domain.answer.dto.request.AnswerRequestDto;
 import com.example.comus.domain.answer.entity.Answer;
+import com.example.comus.domain.block.entity.BlockCount;
+import com.example.comus.domain.block.repository.BlockCountRepository;
 import com.example.comus.domain.question.repository.QuestionRepository;
 import com.example.comus.domain.user.repository.UserRespository;
 import com.example.comus.domain.user.entity.User;
@@ -33,6 +35,7 @@ public class AnswerService {
     private final AnswerRepository answerRepository;
     private final UserRespository userRepository;
     private final QuestionRepository questionRepository;
+    private final BlockCountRepository blockCountRepository;
 
     public StatisticResponseDto getAnswerStatistic(Long userId) {
 
@@ -76,14 +79,11 @@ public class AnswerService {
         return Math.round(result * 10) / 10.0;
     }
 
+    // 답변하기
     @Transactional
-    public long createAnswer(Long userId, AnswerRequestDto answerRequest) {
+    public void createAnswer(Long userId, AnswerRequestDto answerRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-
-        user.addChatTime();
-        user.addChatCount();
-        userRepository.save(user);
 
         Question question = questionRepository.findById(answerRequest.questionId())
                 .orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
@@ -93,19 +93,24 @@ public class AnswerService {
                 .question(question)
                 .answerContent(answerRequest.answerContent())
                 .build();
-
         answerRepository.save(answer);
-
-        return answer.getId();
+        addBlockCount(userId, question);
     }
 
-    @Scheduled(cron = "0 0 0 * * *")
-    public void resetTodayChatTime() {
-        List<User> users = userRepository.findAll();
-        for (User user : users) {
-            user.resetTodayChatTime();
+    public void addBlockCount(Long userId, Question question) {
+        BlockCount blockCount = blockCountRepository.findByUserId(userId);
+
+        QuestionCategory category = question.getCategory();
+
+        switch (category) {
+            case DAILY -> blockCount.addDailyBlockCount();
+            case SCHOOL -> blockCount.addSchoolBlockCount();
+            case FRIEND -> blockCount.addFriendBlockCount();
+            case FAMILY -> blockCount.addFamilyBlockCount();
+            case HOBBY -> blockCount.addHobbyBlockCount();
         }
-        userRepository.saveAll(users);
+
+        blockCountRepository.save(blockCount);
     }
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yy.MM.dd");
