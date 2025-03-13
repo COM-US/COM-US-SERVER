@@ -28,23 +28,14 @@ import java.util.List;
 public class AnswerController {
     private final AnswerService answerService;
     private final QuestionService questionService;
-    private final BlockService blockService;
     private final SignLanguageService signLanguageService;
 
 
+    //답변하기
     @PostMapping
     public ResponseEntity<?> createAnswer(@UserId Long userId, @RequestBody AnswerRequestDto answerRequest) {
-        long anwserId = answerService.createAnswer(userId, answerRequest);
-        blockService.save(userId, anwserId);
-
-        String answer = answerRequest.answerContent();
-        List<SignLanguageInfoResponseDto> signLanguageInfo= signLanguageService.getSignLanguage(answer);
-        LocalDateTime answerDate = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy.MM.dd");
-        String formattedDate = answerDate.format(formatter);
-        SignLanguageInfoAndDateResponseDto signLanguageInfoAndDate = new SignLanguageInfoAndDateResponseDto(signLanguageInfo, formattedDate);
-
-        return SuccessResponse.ok(signLanguageInfoAndDate);
+        answerService.createAnswer(userId, answerRequest);
+        return SuccessResponse.ok(null);
     }
 
 

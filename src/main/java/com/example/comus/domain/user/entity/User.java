@@ -30,10 +30,6 @@ public class User extends BaseTimeEntity {
 
     private String imageUrl;
 
-    private LocalTime todayChatTime;
-
-    private LocalTime totalChatTime;
-
     private int totalChatCount;
 
     @OneToMany(mappedBy = "user")
@@ -41,22 +37,6 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user")
     private List<QuestionLike> questionLikes;
-
-    public void addChatTime() {
-        if (todayChatTime == null) {
-            todayChatTime = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
-        }
-        todayChatTime = todayChatTime.plusMinutes(3);
-        totalChatTime = totalChatTime.plusMinutes(3);
-    }
-
-    public void addChatCount() {
-        totalChatCount++;
-    }
-
-    public void resetTodayChatTime() {
-        todayChatTime = LocalTime.of(0, 0, 0);
-    }
 
     public List<Answer> getAnswer() {
         return answers;

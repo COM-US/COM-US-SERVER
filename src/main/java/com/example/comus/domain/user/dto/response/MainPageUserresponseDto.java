@@ -17,7 +17,6 @@ public record MainPageUserresponseDto(
                 .id(user.getId())
                 .name(user.getName())
                 .imageUrl(user.getImageUrl())
-                .todayChatTime(user.getTodayChatTime())
                 .build();
     }
 }

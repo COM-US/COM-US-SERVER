@@ -2,6 +2,8 @@ package com.example.comus.domain.user.service;
 
 import com.example.comus.domain.answer.entity.Answer;
 import com.example.comus.domain.block.entity.Block;
+import com.example.comus.domain.block.entity.BlockCount;
+import com.example.comus.domain.block.repository.BlockCountRepository;
 import com.example.comus.domain.block.repository.BlockRepository;
 import com.example.comus.domain.question.entity.QuestionCategory;
 import com.example.comus.domain.question.repository.QuestionRepository;
@@ -28,6 +30,7 @@ public class UserService {
     private final JwtProvider jwtProvider;
     private final UserRespository userRepository;
     private final BlockRepository blockRepository;
+    private final BlockCountRepository blockCountRepository;
     private final QuestionRepository questionRepository;
 
     public String issueNewAccessToken(Long memberId) {
@@ -48,9 +51,18 @@ public class UserService {
     @Transactional
     public UserTokenResponseDto login(LoginRequestDto loginRequest) {
         User user = userRepository.findBySocialIdAndSocialType(loginRequest.socialId(), loginRequest.socialType())
-                .orElseGet(() -> userRepository.save(loginRequest.toEntity()));
+                // 유저가 새로 생성된 경우에만 유저 정보 저장 & BlockCount 생성
+                .orElseGet(() -> {
+                    User newUser = userRepository.save(loginRequest.toEntity());
+                    BlockCount blockCount = BlockCount.builder()
+                            .user(newUser)
+                            .build();
+                    blockCountRepository.save(blockCount);
+                    return newUser;
+                });
         return getToken(user.getId());
     }
+
 
     public UserInfoResponseDto getUserInfo(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
@@ -105,17 +117,13 @@ public class UserService {
         int hobbyTotalCount = getTotalCountByCategory(QuestionCategory.HOBBY);
         int hobbyPercent = calculatePercentage(hobbyCount, hobbyTotalCount);
 
-        int randomCount = calculateUniqueQuestionCountByCategory(answers, QuestionCategory.RANDOM);
-        int randomTotalCount = getTotalCountByCategory(QuestionCategory.RANDOM);
-        int randomPercent = calculatePercentage(randomCount, randomTotalCount);
 
         return CategoryResponseDto.from(
                 dailyCount, dailyTotalCount, dailyPercent,
                 schoolCount, schoolTotalCount, schoolPercent,
                 friendCount, friendTotalCount, friendPercent,
                 familyCount, familyTotalCount, familyPercent,
-                hobbyCount, hobbyTotalCount, hobbyPercent,
-                randomCount, randomTotalCount, randomPercent
+                hobbyCount, hobbyTotalCount, hobbyPercent
         );
     }
 

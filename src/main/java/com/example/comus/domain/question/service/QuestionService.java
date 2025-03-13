@@ -3,10 +3,7 @@ package com.example.comus.domain.question.service;
 import com.example.comus.domain.answer.repository.AnswerRepository;
 import com.example.comus.domain.question.dto.response.QuestionListResponseDto;
 import com.example.comus.domain.question.dto.response.QuestionResponseDto;
-import com.example.comus.domain.question.entity.QuestionCategory;
-import com.example.comus.domain.question.entity.Question;
-import com.example.comus.domain.question.entity.QuestionLike;
-import com.example.comus.domain.question.entity.SortType;
+import com.example.comus.domain.question.entity.*;
 import com.example.comus.domain.question.repository.QuestionLikeRepository;
 import com.example.comus.domain.question.repository.QuestionRepository;
 import com.example.comus.domain.user.entity.User;
@@ -32,6 +29,13 @@ public class QuestionService {
     private final UserRespository userRepository;
     private final AnswerRepository answerRepository;
     private final QuestionLikeRepository questionLikeRepository;
+
+    // 랜덤 질문 아이디
+    public Long getRandomQuestionId() {
+        List<Question> questions = questionRepository.findByAnswerType(AnswerType.MULTIPLE_CHOICE);
+        int randomIndex = (int) (Math.random() * questions.size());
+        return questions.get(randomIndex).getId();
+    }
 
     // 카테고리별 질문리스트 조회
     public List<QuestionListResponseDto> getQuestionList(Long userId, QuestionCategory category,  SortType sort) {
