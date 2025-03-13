@@ -50,8 +50,6 @@ public class QuestionController {
         return SuccessResponse.ok(questionAndMultipleChoice);
     }
 
-
-
     // 질문 찜하기
     @PostMapping("{question_id}/like")
     public ResponseEntity<SuccessResponse<?>> likeQuestion(@UserId Long userId, @PathVariable("question_id") Long questionId) {

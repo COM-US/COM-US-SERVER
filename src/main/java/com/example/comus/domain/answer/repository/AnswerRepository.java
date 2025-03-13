@@ -21,21 +21,14 @@ public interface AnswerRepository extends JpaRepository<Answer, Long>{
 
     @Query("SELECT COUNT(a) FROM Answer a JOIN a.question q WHERE a.user.id = :userId AND q.answerType = :answerType")
     long countByUserIdAndAnswerType(@Param("userId") Long userId, @Param("answerType") AnswerType answerType);
-    long countByUserId(Long userId);
 
     @Query("SELECT COUNT(a) FROM Answer a WHERE a.user = :user AND a.question = :question")
     int countByUserAndQuestion(@Param("user") User user, @Param("question") Question question);
 
-
+    long countByUserId(Long userId);
     List<Answer> findByUserIdAndQuestionId(Long userId, Long questionId);
-
-    int countByQuestionId(Long questionId);
-
-
-    List<Answer> findAllByOrderByCreatedAtDesc();
 
     List<Answer> findByUserId(long userId);
 
-    @Query("SELECT a.question.id, COUNT(DISTINCT a) FROM Answer a WHERE a.user = :user AND a.question IN :questions GROUP BY a.question.id")
-    Map<Long, Integer> countByUserAndQuestions(@Param("user") User user, @Param("questions") List<Question> questions);
+    long countByUserIdAndQuestionCategoryAndIsUsedFalse(Long userId, QuestionCategory category);
 }
