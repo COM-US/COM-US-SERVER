@@ -21,8 +21,6 @@ public record UserInfoResponseDto(
                 .id(user.getId())
                 .name(user.getName())
                 .imageUrl(user.getImageUrl())
-                .todayChatTime(user.getTodayChatTime())
-                .totalChatTime(user.getTotalChatTime())
                 .totalChatCount(user.getTotalChatCount())
                 .build();
     }

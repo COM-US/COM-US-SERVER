@@ -22,13 +22,10 @@ public record CategoryResponseDto(
 
         int HobbyCount,
         int HobbyTotalCount,
-        int HobbyPercent,
+        int HobbyPercent
 
-        int RandomCount,
-        int RandomTotalCount,
-        int RandomPercent
 ) {
-    public static CategoryResponseDto from(int dailyCount, int dailyTotalCount, int dailyPercent, int schoolCount, int schoolTotalCount, int schoolPercent, int friendCount, int friendTotalCount, int friendPercent, int familyCount, int familyTotalCount, int familyPercent, int hobbyCount, int hobbyTotalCount, int hobbyPercent, int randomCount, int randomTotalCount, int randomPercent) {
+    public static CategoryResponseDto from(int dailyCount, int dailyTotalCount, int dailyPercent, int schoolCount, int schoolTotalCount, int schoolPercent, int friendCount, int friendTotalCount, int friendPercent, int familyCount, int familyTotalCount, int familyPercent, int hobbyCount, int hobbyTotalCount, int hobbyPercent) {
         return CategoryResponseDto.builder()
                 .DailyCount(dailyCount)
                 .DailyTotalCount(dailyTotalCount)
@@ -45,9 +42,6 @@ public record CategoryResponseDto(
                 .HobbyCount(hobbyCount)
                 .HobbyTotalCount(hobbyTotalCount)
                 .HobbyPercent(hobbyPercent)
-                .RandomCount(randomCount)
-                .RandomTotalCount(randomTotalCount)
-                .RandomPercent(randomPercent)
                 .build();
     }
 }
