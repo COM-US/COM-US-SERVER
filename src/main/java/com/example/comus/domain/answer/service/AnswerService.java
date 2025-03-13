@@ -1,28 +1,22 @@
 package com.example.comus.domain.answer.service;
 
-import com.example.comus.domain.answer.dto.response.AnswerResponseDto;
 import com.example.comus.domain.answer.dto.request.AnswerRequestDto;
-import com.example.comus.domain.answer.entity.Answer;
-import com.example.comus.domain.block.entity.BlockCount;
-import com.example.comus.domain.block.repository.BlockCountRepository;
-import com.example.comus.domain.question.repository.QuestionRepository;
-import com.example.comus.domain.user.repository.UserRespository;
-import com.example.comus.domain.user.entity.User;
-import com.example.comus.domain.question.entity.Question;
-import com.example.comus.domain.answer.repository.AnswerRepository;
+import com.example.comus.domain.answer.dto.response.AnswerResponseDto;
 import com.example.comus.domain.answer.dto.response.StatisticResponseDto;
-import com.example.comus.domain.question.entity.QuestionCategory;
+import com.example.comus.domain.answer.entity.Answer;
+import com.example.comus.domain.answer.repository.AnswerRepository;
 import com.example.comus.domain.question.entity.AnswerType;
+import com.example.comus.domain.question.entity.Question;
+import com.example.comus.domain.question.entity.QuestionCategory;
+import com.example.comus.domain.question.repository.QuestionRepository;
+import com.example.comus.domain.user.entity.User;
+import com.example.comus.domain.user.repository.UserRespository;
 import com.example.comus.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static com.example.comus.global.error.ErrorCode.*;
@@ -35,23 +29,21 @@ public class AnswerService {
     private final AnswerRepository answerRepository;
     private final UserRespository userRepository;
     private final QuestionRepository questionRepository;
-    private final BlockCountRepository blockCountRepository;
 
     public StatisticResponseDto getAnswerStatistic(Long userId) {
 
         long totalAnswers = answerRepository.countByUserId(userId);
         if (totalAnswers == 0) {
-            return new StatisticResponseDto(0, 0, 0, 0, 0, 0, 0, 0);
+            return new StatisticResponseDto(0, 0, 0, 0, 0, 0, 0);
         }
 
         double sentenceRatio = getRatio("SENTENCE", totalAnswers, "answerType", userId);
-        double multipleChoiceRatio = getRatio("MULTIPLE_CHOICE", totalAnswers, "answerType" , userId);
-        double dailyQuestionRatio = getRatio("DAILY", totalAnswers, "category" , userId);
-        double schoolQuestionRatio = getRatio("SCHOOL", totalAnswers, "category" , userId);
-        double hobbyQuestionRatio = getRatio("FRIEND", totalAnswers, "category" , userId);
-        double familyQuestionRatio = getRatio("FAMILY", totalAnswers, "category" , userId);
-        double friendQuestionRatio = getRatio("HOBBY", totalAnswers, "category" , userId);
-        double randomQuestionRatio = getRatio("RANDOM", totalAnswers, "category" , userId);
+        double multipleChoiceRatio = getRatio("MULTIPLE_CHOICE", totalAnswers, "answerType", userId);
+        double dailyQuestionRatio = getRatio("DAILY", totalAnswers, "category", userId);
+        double schoolQuestionRatio = getRatio("SCHOOL", totalAnswers, "category", userId);
+        double hobbyQuestionRatio = getRatio("FRIEND", totalAnswers, "category", userId);
+        double familyQuestionRatio = getRatio("FAMILY", totalAnswers, "category", userId);
+        double friendQuestionRatio = getRatio("HOBBY", totalAnswers, "category", userId);
 
         return new StatisticResponseDto(
                 sentenceRatio,
@@ -60,8 +52,7 @@ public class AnswerService {
                 schoolQuestionRatio,
                 hobbyQuestionRatio,
                 familyQuestionRatio,
-                friendQuestionRatio,
-                randomQuestionRatio
+                friendQuestionRatio
         );
     }
 
@@ -88,29 +79,9 @@ public class AnswerService {
         Question question = questionRepository.findById(answerRequest.questionId())
                 .orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
 
-        Answer answer = Answer.builder()
-                .user(user)
-                .question(question)
-                .answerContent(answerRequest.answerContent())
-                .build();
+        Answer answer = answerRequest.toEntity(user, question);
+
         answerRepository.save(answer);
-        addBlockCount(userId, question);
-    }
-
-    public void addBlockCount(Long userId, Question question) {
-        BlockCount blockCount = blockCountRepository.findByUserId(userId);
-
-        QuestionCategory category = question.getCategory();
-
-        switch (category) {
-            case DAILY -> blockCount.addDailyBlockCount();
-            case SCHOOL -> blockCount.addSchoolBlockCount();
-            case FRIEND -> blockCount.addFriendBlockCount();
-            case FAMILY -> blockCount.addFamilyBlockCount();
-            case HOBBY -> blockCount.addHobbyBlockCount();
-        }
-
-        blockCountRepository.save(blockCount);
     }
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yy.MM.dd");
@@ -118,8 +89,9 @@ public class AnswerService {
     //이전 답변 보기 페이지 조회
     public List<AnswerResponseDto> getAnswer(Long userId, Long questionId) {
         List<Answer> answers = answerRepository.findByUserIdAndQuestionId(userId, questionId);
-        if (answers.isEmpty()) {throw new EntityNotFoundException(ANSWER_NOT_FOUND);}
-
+        if (answers.isEmpty()) {
+            throw new EntityNotFoundException(ANSWER_NOT_FOUND);
+        }
         return answers.stream()
                 .map(answer -> AnswerResponseDto.from(answer, answer.getCreatedAt().format(DATE_FORMATTER)))
                 .toList();

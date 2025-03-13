@@ -3,14 +3,9 @@ package com.example.comus.domain.answer.controller;
 import com.example.comus.domain.answer.dto.request.AnswerRequestDto;
 import com.example.comus.domain.answer.dto.response.AnswerListResponseDto;
 import com.example.comus.domain.answer.dto.response.AnswerResponseDto;
-import com.example.comus.domain.answer.entity.Answer;
 import com.example.comus.domain.answer.service.AnswerService;
-import com.example.comus.domain.block.entity.Block;
-import com.example.comus.domain.block.service.BlockService;
 import com.example.comus.domain.question.dto.response.QuestionListResponseDto;
 import com.example.comus.domain.question.service.QuestionService;
-import com.example.comus.domain.signlanguage.dto.response.SignLanguageInfoAndDateResponseDto;
-import com.example.comus.domain.signlanguage.dto.response.SignLanguageInfoResponseDto;
 import com.example.comus.domain.signlanguage.service.SignLanguageService;
 import com.example.comus.global.common.SuccessResponse;
 import com.example.comus.global.config.auth.UserId;
@@ -18,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RequiredArgsConstructor

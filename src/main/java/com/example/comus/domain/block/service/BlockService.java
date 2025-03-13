@@ -2,6 +2,7 @@ package com.example.comus.domain.block.service;
 
 import com.example.comus.domain.answer.entity.Answer;
 import com.example.comus.domain.answer.repository.AnswerRepository;
+import com.example.comus.domain.block.dto.response.BlockCountResponseDto;
 import com.example.comus.domain.block.entity.Block;
 import com.example.comus.domain.block.entity.BlockShape;
 import com.example.comus.domain.block.repository.BlockRepository;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Transactional
@@ -28,6 +30,26 @@ public class BlockService {
 
     private static final int BOARD_SIZE = 4;
     private static final int MAX_BLOCKS_PER_LEVEL = BOARD_SIZE * BOARD_SIZE;
+
+    // 블럭 개수 조회
+    public BlockCountResponseDto getBlockCount(Long userId) {
+        Map<QuestionCategory, Integer> countMap = Arrays.stream(QuestionCategory.values())
+                .collect(Collectors.toMap(
+                        category -> category,
+                        category -> {
+                            Long count = answerRepository.countByUserIdAndQuestionCategoryAndIsUsedFalse(userId, category);
+                            return count != null ? count.intValue() : 0;
+                        }
+                ));
+
+        return BlockCountResponseDto.of(
+                countMap.get(QuestionCategory.DAILY),
+                countMap.get(QuestionCategory.SCHOOL),
+                countMap.get(QuestionCategory.HOBBY),
+                countMap.get(QuestionCategory.FAMILY),
+                countMap.get(QuestionCategory.FRIEND)
+        );
+    }
 
     public void save(long userId, long answerId) {
         Answer answer = answerRepository.findById(answerId)

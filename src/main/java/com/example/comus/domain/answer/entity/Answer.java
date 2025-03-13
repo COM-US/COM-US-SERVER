@@ -1,15 +1,14 @@
 package com.example.comus.domain.answer.entity;
 
-import com.example.comus.domain.block.entity.Block;
 import com.example.comus.domain.question.entity.Question;
-import com.example.comus.domain.signlanguage.entity.SignLanguage;
+import com.example.comus.domain.question.entity.QuestionCategory;
 import com.example.comus.domain.user.entity.User;
 import com.example.comus.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Builder
 @AllArgsConstructor
@@ -23,6 +22,11 @@ public class Answer extends BaseTimeEntity {
     private Long id;
 
     private String answerContent;
+
+    boolean isUsed;
+
+    @Enumerated(EnumType.STRING)
+    private QuestionCategory questionCategory;
 
     @ManyToOne
     @JoinColumn(name = "question_id")
