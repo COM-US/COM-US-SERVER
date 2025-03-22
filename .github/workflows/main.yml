@@ -70,6 +70,7 @@ jobs:
         ssh -T -o StrictHostKeyChecking=no -i private_key.pem ubuntu@$SERVER_ADDRESS << 'EOF'
           
           # deploy.sh 스크립트 실행
+          chmod +x /home/ubuntu/deploy.sh
           cd /home/ubuntu
           ./deploy.sh
         EOF
