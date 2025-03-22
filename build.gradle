@@ -52,6 +52,9 @@ dependencies {
     //chatgpt
     implementation 'io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4'
 
+    //redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 
 }
 
