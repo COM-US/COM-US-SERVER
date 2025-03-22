@@ -65,14 +65,48 @@ jobs:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
         SERVER_ADDRESS: ${{ secrets.EC2_SERVER_ADDRESS }}
       run: |
+        # SSH를 사용하여 EC2 서버에 접속
         echo "$PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
         ssh -T -o StrictHostKeyChecking=no -i private_key.pem ubuntu@$SERVER_ADDRESS << 'EOF'
           
-          # deploy.sh 스크립트 실행
-          sudo chmod +x /home/ubuntu/deploy.sh
-          cd /home/ubuntu
-          ./deploy.sh
+          # 최신 이미지 다운로드
+          echo "Pulling the latest Docker image..."
+          docker pull hysong4u/com-us-server:latest
+    
+          # 기존 Green 컨테이너가 실행 중인 경우 중지 및 제거
+          if [ $(docker ps -q -f name=com-us-server-green) ]; then
+            echo "Stopping and removing existing Green container..."
+            docker stop com-us-server-green && docker rm com-us-server-green
+          fi
+    
+          # 기존 Blue 컨테이너가 실행 중인 경우 중지 및 제거
+          if [ $(docker ps -q -f name=com-us-server-blue) ]; then
+            echo "Stopping and removing existing Blue container..."
+            docker stop com-us-server-blue && docker rm com-us-server-blue
+          fi
+    
+          # 새로운 Green 컨테이너 실행 (기존 포트로 실행)
+          echo "Starting new Green container on port 443..."
+          docker run -d --name com-us-server-green -p 443:443 hysong4u/com-us-server:latest
+    
+          # 새로운 컨테이너가 정상 실행되는지 확인
+          sleep 10
+          if [ $(docker ps -q -f name=com-us-server-green) ]; then
+            echo "✅ New Green container is running. Switching traffic."
+            
+            # 컨테이너 이름 변경 (Green -> Blue로 트래픽 전환)
+            docker rename com-us-server-green com-us-server-blue
+          else
+            echo "❌ New Green container failed to start. Keeping old version."
+            docker logs com-us-server-green
+            docker rm -f com-us-server-green
+            exit 1
+          fi
+    
+          # 불필요한 이미지 정리
+          docker image prune -f
+    
         EOF
 
     #- name: Deploy to EC2
