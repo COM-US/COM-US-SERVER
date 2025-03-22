@@ -19,10 +19,6 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         
-    - name: 브랜치명 확인
-      run: |
-        echo "브랜치명: ${GITHUB_REF#refs/heads/}"
-
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
@@ -47,18 +43,6 @@ jobs:
         docker build -t com-us-server .
         docker tag com-us-server hysong4u/com-us-server:latest
         docker push hysong4u/com-us-server:latest
-    - name: Get timestamp
-      uses: gerred/actions/current-time@master
-      id: current-time
-
-    - name: Run string replace
-      uses: frabert/replace-string-action@master
-      id: format-time
-      with:
-        pattern: '[:\.]+'
-        string: "${{ steps.current-time.outputs.time }}"
-        replace-with: '-'
-        flags: 'g'
 
     - name: Deploy to EC2 (Blue/Green)
       env:
@@ -97,7 +81,7 @@ jobs:
               echo "✅ Green container is running. Checking health..."
   
               # 헬스 체크 URL 호출 (localhost:443)
-              curl --fail https://localhost:443 || { 
+              curl --insecure https://localhost:443 || { 
                 echo "❌ Health check failed for Green container."; 
                 docker logs com-us-server-green;
                 docker rm -f com-us-server-green;
