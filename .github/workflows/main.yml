@@ -69,44 +69,51 @@ jobs:
         echo "$PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
         ssh -T -o StrictHostKeyChecking=no -i private_key.pem ubuntu@$SERVER_ADDRESS << 'EOF'
-          
+
           # 최신 이미지 다운로드
           echo "Pulling the latest Docker image..."
           docker pull hysong4u/com-us-server:latest
-    
+
           # 기존 Green 컨테이너가 실행 중인 경우 중지 및 제거
           if [ $(docker ps -q -f name=com-us-server-green) ]; then
             echo "Stopping and removing existing Green container..."
             docker stop com-us-server-green && docker rm com-us-server-green
           fi
-    
+
           # 기존 Blue 컨테이너가 실행 중인 경우 중지 및 제거
           if [ $(docker ps -q -f name=com-us-server-blue) ]; then
             echo "Stopping and removing existing Blue container..."
             docker stop com-us-server-blue && docker rm com-us-server-blue
           fi
-    
+
           # 새로운 Green 컨테이너 실행 (기존 포트로 실행)
           echo "Starting new Green container on port 443..."
           docker run -d --name com-us-server-green -p 443:443 hysong4u/com-us-server:latest
-    
-          # 새로운 컨테이너가 정상 실행되는지 확인
-          sleep 10
-          if [ $(docker ps -q -f name=com-us-server-green) ]; then
-            echo "✅ New Green container is running. Switching traffic."
-            
-            # 컨테이너 이름 변경 (Green -> Blue로 트래픽 전환)
-            docker rename com-us-server-green com-us-server-blue
-          else
-            echo "❌ New Green container failed to start. Keeping old version."
+
+          # 컨테이너 상태 확인
+          timeout=0
+          max_attempts=30
+          while [ $timeout -lt $max_attempts ]; do
+            if [ $(docker ps -q -f name=com-us-server-green) ]; then
+              echo "✅ Green container is running. Proceeding with traffic switch."
+              docker rename com-us-server-green com-us-server-blue
+              break
+            fi
+            timeout=$((timeout + 1))
+            echo "Waiting for Green container to start... attempt $timeout"
+            sleep 5
+          done
+
+          if [ $timeout -ge $max_attempts ]; then
+            echo "❌ Green container failed to start. Keeping old version."
             docker logs com-us-server-green
             docker rm -f com-us-server-green
             exit 1
           fi
-    
+
           # 불필요한 이미지 정리
           docker image prune -f
-    
+
         EOF
 
     #- name: Deploy to EC2
