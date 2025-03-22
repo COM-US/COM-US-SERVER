@@ -56,7 +56,6 @@ jobs:
         sudo chmod +x /home/ubuntu/deploy.sh
         /home/ubuntu/deploy.sh
         
-EOF
 
     #- name: Deploy to EC2
       #env:
