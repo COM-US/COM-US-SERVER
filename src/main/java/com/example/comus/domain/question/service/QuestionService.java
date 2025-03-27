@@ -85,7 +85,7 @@ public class QuestionService {
         return QuestionResponseDto.from(question);
     }
 
-    public List<String> getMultipleChoiceAnswer(Long questionId) {
+    public List<String> getQuestionDatail(Long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
         String multipleChoices = question.getMultipleChoices();
         if (multipleChoices == null) {

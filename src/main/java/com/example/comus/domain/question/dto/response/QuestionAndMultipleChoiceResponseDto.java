@@ -4,6 +4,6 @@ import java.util.List;
 
 public record QuestionAndMultipleChoiceResponseDto(
         QuestionResponseDto question,
-        List<String> answerList
+        List<String> multipleChoice
 ) {
 }
