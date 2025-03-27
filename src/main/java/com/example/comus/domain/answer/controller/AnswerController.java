@@ -21,10 +21,9 @@ import java.util.List;
 public class AnswerController {
     private final AnswerService answerService;
     private final QuestionService questionService;
-    private final SignLanguageService signLanguageService;
-
 
     //답변하기
+    //TODO: 객관식 답변은 주어진 답변 중 선택하도록 예외 처리 필요
     @PostMapping
     public ResponseEntity<?> createAnswer(@UserId Long userId, @RequestBody AnswerRequestDto answerRequest) {
         answerService.createAnswer(userId, answerRequest);

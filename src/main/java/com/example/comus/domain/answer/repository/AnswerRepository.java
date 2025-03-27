@@ -6,13 +6,10 @@ import com.example.comus.domain.question.entity.Question;
 import com.example.comus.domain.question.entity.QuestionCategory;
 import com.example.comus.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long>{
 
@@ -28,7 +25,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Long>{
     long countByUserId(Long userId);
     List<Answer> findByUserIdAndQuestionId(Long userId, Long questionId);
 
-    List<Answer> findByUserId(long userId);
+    Long countByUserIdAndQuestionCategoryAndIsUsedFalse(Long userId, QuestionCategory category);
 
-    long countByUserIdAndQuestionCategoryAndIsUsedFalse(Long userId, QuestionCategory category);
+    List<Answer> findByQuestionCategoryAndIsUsedFalseOrderByCreatedAtAsc(QuestionCategory questionCategory);
 }
