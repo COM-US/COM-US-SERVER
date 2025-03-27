@@ -1,7 +1,8 @@
 package com.example.comus.domain.answer.service;
 
 import com.example.comus.domain.answer.dto.request.AnswerRequestDto;
-import com.example.comus.domain.answer.dto.response.AnswerResponseDto;
+import com.example.comus.domain.answer.dto.response.AnswerHistoryListResponseDto;
+import com.example.comus.domain.answer.dto.response.AnswerHistoryResponseDto;
 import com.example.comus.domain.answer.dto.response.StatisticResponseDto;
 import com.example.comus.domain.answer.entity.Answer;
 import com.example.comus.domain.answer.repository.AnswerRepository;
@@ -18,8 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
-import static com.example.comus.global.error.ErrorCode.*;
+import static com.example.comus.global.error.ErrorCode.QUESTION_NOT_FOUND;
+import static com.example.comus.global.error.ErrorCode.USER_NOT_FOUND;
 
 @Transactional
 @RequiredArgsConstructor
@@ -84,17 +88,29 @@ public class AnswerService {
         answerRepository.save(answer);
     }
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yy.MM.dd");
+    // 이전 답변 보기
+    public List<AnswerHistoryListResponseDto> getAnswerHistory(Long userId) {
 
-    //이전 답변 보기 페이지 조회
-    public List<AnswerResponseDto> getAnswer(Long userId, Long questionId) {
-        List<Answer> answers = answerRepository.findByUserIdAndQuestionId(userId, questionId);
-        if (answers.isEmpty()) {
-            throw new EntityNotFoundException(ANSWER_NOT_FOUND);
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        List<Answer> answers = answerRepository.findByUserOrderByCreatedAtAsc(user);
+
+        // 날짜별로 그룹화
         return answers.stream()
-                .map(answer -> AnswerResponseDto.from(answer, answer.getCreatedAt().format(DATE_FORMATTER)))
-                .toList();
+                .collect(Collectors.groupingBy(this::getAnswerDate))
+                .entrySet().stream()
+                .map(entry -> new AnswerHistoryListResponseDto(entry.getKey(),
+                        entry.getValue().stream()
+                                .map(AnswerHistoryResponseDto::from)
+                                .collect(Collectors.toList())))
+                .collect(Collectors.toList());
+    }
+
+    private String getAnswerDate(Answer answer) {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일", Locale.KOREAN);
+        return answer.getCreatedAt().format(dateFormatter);
     }
 
 }
+
