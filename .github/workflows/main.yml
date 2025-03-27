@@ -44,7 +44,7 @@ jobs:
         docker tag com-us-server hysong4u/com-us-server:latest
         docker push hysong4u/com-us-server:latest
 
-    - name: Deploy to EC2 (Blue/Green)
+    - name: Deploy to EC2
       env:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
         SERVER_ADDRESS: ${{ secrets.EC2_SERVER_ADDRESS }}
@@ -52,26 +52,13 @@ jobs:
         echo "$PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
         ssh -T -o StrictHostKeyChecking=no -i private_key.pem ubuntu@$SERVER_ADDRESS << 'EOF'
-        
-        sudo chmod +x /home/ubuntu/deploy.sh
-        /home/ubuntu/deploy.sh
-        
-
-    #- name: Deploy to EC2
-      #env:
-        #PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-        #SERVER_ADDRESS: ${{ secrets.EC2_SERVER_ADDRESS }}
-      #run: |
-        #echo "$PRIVATE_KEY" > private_key.pem
-        #chmod 600 private_key.pem
-        #ssh -T -o StrictHostKeyChecking=no -i private_key.pem ubuntu@$SERVER_ADDRESS << 'EOF'
-          #docker pull hysong4u/com-us-server:latest
-          #existing_container_id=$(sudo docker ps -q --filter "publish=443")
-          #[ -n "$existing_container_id" ] && sudo docker stop $existing_container_id && sudo docker rm $existing_container_id
-          #sudo docker image prune -f
-          #docker run -d -p 443:443 hysong4u/com-us-server:latest
-        #EOF
-        # docker 권한 문제 발생시
-        # sudo chmod 660 /var/run/docker.sock
-        # sudo /usr/sbin/usermod -aG docker $USER
-        # sudo /usr/sbin/usermod -aG docker ubuntu
+          docker pull hysong4u/com-us-server:latest
+          existing_container_id=$(sudo docker ps -q --filter "publish=443")
+          [ -n "$existing_container_id" ] && sudo docker stop $existing_container_id && sudo docker rm $existing_container_id
+          sudo docker image prune -f
+          docker run -d -p 443:443 hysong4u/com-us-server:latest
+        EOF
+         docker 권한 문제 발생시
+         sudo chmod 660 /var/run/docker.sock
+         sudo /usr/sbin/usermod -aG docker $USER
+         sudo /usr/sbin/usermod -aG docker ubuntu
