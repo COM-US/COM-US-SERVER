@@ -23,9 +23,10 @@ public interface AnswerRepository extends JpaRepository<Answer, Long>{
     int countByUserAndQuestion(@Param("user") User user, @Param("question") Question question);
 
     long countByUserId(Long userId);
-    List<Answer> findByUserIdAndQuestionId(Long userId, Long questionId);
 
     Long countByUserIdAndQuestionCategoryAndIsUsedFalse(Long userId, QuestionCategory category);
+    List<Answer> findByUserIdAndQuestionCategoryAndIsUsedFalseOrderByCreatedAtAsc(Long userId, QuestionCategory questionCategory);
 
-    List<Answer> findByQuestionCategoryAndIsUsedFalseOrderByCreatedAtAsc(QuestionCategory questionCategory);
+    List<Answer> findByUserOrderByCreatedAtAsc(User user);
+
 }

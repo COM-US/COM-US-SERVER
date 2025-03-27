@@ -15,11 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static com.example.comus.global.error.ErrorCode.SIGNLANGUAGE_NOT_FOUND;
-
+// 수어 크롤링
 @AllArgsConstructor
 @Service
 @Transactional
@@ -57,10 +55,6 @@ public class SignLanguageService {
             Elements spanElements = doc.select("span[class=tit]");
             Element spanElement = spanElements.first();
             Element aElement = spanElement.selectFirst("a");
-            String aElementText = aElement.text().trim();
-            if (!aElementText.contains(searchWord)) {
-                throw new EntityNotFoundException(SIGNLANGUAGE_NOT_FOUND);
-            }
 
             String href = aElement.attr("href");
 
