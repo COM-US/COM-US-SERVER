@@ -1,5 +1,6 @@
 package com.example.comus.domain.question.controller;
 
+import com.example.comus.domain.question.dto.request.QuestionRequestDto;
 import com.example.comus.domain.question.dto.response.QuestionAndMultipleChoiceResponseDto;
 import com.example.comus.domain.question.dto.response.QuestionListResponseDto;
 import com.example.comus.domain.question.dto.response.QuestionResponseDto;
@@ -31,22 +32,17 @@ public class QuestionController {
         return SuccessResponse.ok(questionList);
     }
 
-    // 질문 상세 조회 (선택형 답변 조회)
-    @GetMapping("{question_id}/multiple-choice")
-    public ResponseEntity<SuccessResponse<?>> getMultipleChoiceAnswer(@PathVariable(value = "question_id") Long questionId) {
-        QuestionResponseDto question = questionService.getQuestion(questionId);
-        List<String> answerList = questionService.getMultipleChoiceAnswer(questionId);
-        QuestionAndMultipleChoiceResponseDto questionAndMultipleChoice = new QuestionAndMultipleChoiceResponseDto(question, answerList);
-        return SuccessResponse.ok(questionAndMultipleChoice);
-    }
+    // 질문 상세 조회 (선택형 답변 조회 포함)
+    @GetMapping("/detail")
+    public ResponseEntity<SuccessResponse<?>> getQuestionDatail(@RequestBody QuestionRequestDto questionRequest) {
+        Long questionId = questionRequest.isRandom() && questionRequest.questionId() == null
+                ? questionService.getRandomQuestionId()
+                : questionRequest.questionId();
 
-    // 질문 상세 조회 (랜덤 선택형 답변 조회)
-    @GetMapping("/multiple-choice")
-    public ResponseEntity<SuccessResponse<?>> getRandomMultipleChoiceAnswer() {
-        Long questionId = questionService.getRandomQuestionId();
         QuestionResponseDto question = questionService.getQuestion(questionId);
-        List<String> answerList = questionService.getMultipleChoiceAnswer(questionId);
-        QuestionAndMultipleChoiceResponseDto questionAndMultipleChoice = new QuestionAndMultipleChoiceResponseDto(question, answerList);
+        List<String> multipleChoice = questionService.getQuestionDatail(questionId);
+
+        QuestionAndMultipleChoiceResponseDto questionAndMultipleChoice = new QuestionAndMultipleChoiceResponseDto(question, multipleChoice);
         return SuccessResponse.ok(questionAndMultipleChoice);
     }
 

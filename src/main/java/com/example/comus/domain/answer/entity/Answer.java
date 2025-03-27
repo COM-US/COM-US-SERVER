@@ -1,5 +1,6 @@
 package com.example.comus.domain.answer.entity;
 
+import com.example.comus.domain.question.entity.AnswerType;
 import com.example.comus.domain.question.entity.Question;
 import com.example.comus.domain.question.entity.QuestionCategory;
 import com.example.comus.domain.user.entity.User;
@@ -25,6 +26,10 @@ public class Answer extends BaseTimeEntity {
 
     boolean isUsed;
 
+    // 대화형, 선택형 중 하나
+    @Enumerated(EnumType.STRING)
+    AnswerType answerType;
+
     @Enumerated(EnumType.STRING)
     private QuestionCategory questionCategory;
 
@@ -36,5 +41,7 @@ public class Answer extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-
+    public void setUsed() {
+        this.isUsed = true;
+    }
 }
