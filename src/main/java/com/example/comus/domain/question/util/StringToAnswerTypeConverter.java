@@ -1,5 +1,6 @@
-package com.example.comus.domain.question.entity;
+package com.example.comus.domain.question.util;
 
+import com.example.comus.domain.question.entity.AnswerType;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
