@@ -33,7 +33,7 @@ public class QuestionController {
     }
 
     // 질문 상세 조회 (선택형 답변 조회 포함)
-    @GetMapping("/detail")
+    @PostMapping("/detail")
     public ResponseEntity<SuccessResponse<?>> getQuestionDatail(@RequestBody QuestionRequestDto questionRequest) {
         Long questionId = questionRequest.isRandom() && questionRequest.questionId() == null
                 ? questionService.getRandomQuestionId()
