@@ -22,7 +22,7 @@ public class Block extends BaseTimeEntity {
 
     private int blockColumn;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_id")
     private Answer answer;
 

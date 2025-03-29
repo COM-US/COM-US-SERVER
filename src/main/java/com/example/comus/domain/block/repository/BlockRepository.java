@@ -13,6 +13,5 @@ import java.util.Optional;
 public interface BlockRepository extends JpaRepository<Block, Long> {
 
     List<Block> findByAnswer(Answer answer);
-
-    List<Block> findByAnswerIn(List<Answer> answers);
+    List<Block> findByAnswerUserId(Long userId);
 }
