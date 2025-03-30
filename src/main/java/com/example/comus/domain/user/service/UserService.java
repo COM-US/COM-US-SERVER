@@ -1,13 +1,22 @@
 package com.example.comus.domain.user.service;
 
-import com.example.comus.domain.block.repository.BlockRepository;
-import com.example.comus.domain.question.repository.QuestionRepository;
+import com.example.comus.domain.answer.repository.AnswerRepository;
+import com.example.comus.domain.answer.service.AnswerService;
+import com.example.comus.domain.block.dto.response.BlockResponseDto;
+import com.example.comus.domain.block.service.BlockService;
+import com.example.comus.domain.question.dto.response.RandomQuestionResponseDto;
+import com.example.comus.domain.question.repository.QuestionLikeRepository;
+import com.example.comus.domain.question.service.QuestionService;
 import com.example.comus.domain.user.dto.request.LoginRequestDto;
 import com.example.comus.domain.user.dto.request.UserTokenRequestDto;
+import com.example.comus.domain.user.dto.response.MainPageResponseDto;
+import com.example.comus.domain.user.dto.response.UserInfoResponseDto;
 import com.example.comus.domain.user.dto.response.UserTokenResponseDto;
+import com.example.comus.domain.answer.dto.response.WeeklyAnswerResponseDto;
 import com.example.comus.domain.user.entity.User;
 import com.example.comus.domain.user.repository.UserRespository;
 import com.example.comus.global.config.auth.jwt.JwtProvider;
+import com.example.comus.global.error.exception.EntityNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +24,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static com.example.comus.global.error.ErrorCode.USER_NOT_FOUND;
 
 @RequiredArgsConstructor
 @Service
@@ -23,8 +35,12 @@ import java.util.concurrent.TimeUnit;
 public class UserService {
     private final JwtProvider jwtProvider;
     private final UserRespository userRepository;
-    private final BlockRepository blockRepository;
-    private final QuestionRepository questionRepository;
+    private final QuestionLikeRepository questionLikeRepository;
+    private final AnswerRepository answerRepository;
+    private final AnswerService answerService;
+    private final BlockService blockService;
+    private final QuestionService questionService;
+
     private final RedisTemplate<String, String> redisTemplate;
 
     @Value("${jwt.refresh-token-expire-time}")
@@ -93,4 +109,24 @@ public class UserService {
 
         return UserTokenResponseDto.of(newAccessToken, newRefreshToken);
     }
+
+    public MainPageResponseDto getMainPage(Long userId) {
+        UserInfoResponseDto user = getUserInfo(userId);
+        List<BlockResponseDto> blocks = blockService.getBlock(userId);
+        RandomQuestionResponseDto randomQuestion = questionService.getRandomQuestion();
+        return MainPageResponseDto.of(user,randomQuestion,blocks);
+    }
+
+    public UserInfoResponseDto getUserInfo(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        int answerCount = answerRepository.countByUserId(userId);
+        int likeCount = questionLikeRepository.countByUserId(userId);
+
+        List<WeeklyAnswerResponseDto> weeklyAnswers = answerService.getWeeklyAnswers(userId);
+
+        return UserInfoResponseDto.of(user, answerCount, likeCount, weeklyAnswers);
+    }
+
 }

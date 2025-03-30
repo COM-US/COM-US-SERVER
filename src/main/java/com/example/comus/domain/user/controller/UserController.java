@@ -3,6 +3,7 @@ package com.example.comus.domain.user.controller;
 import com.example.comus.domain.answer.service.AnswerService;
 import com.example.comus.domain.user.dto.request.LoginRequestDto;
 import com.example.comus.domain.user.dto.request.UserTokenRequestDto;
+import com.example.comus.domain.user.dto.response.MainPageResponseDto;
 import com.example.comus.domain.user.dto.response.UserTokenResponseDto;
 import com.example.comus.domain.user.service.UserService;
 import com.example.comus.global.common.SuccessResponse;
@@ -48,6 +49,11 @@ public class UserController {
     }
 
     // 메인홈
+    @GetMapping("/main")
+    public ResponseEntity<SuccessResponse<?>> getMainPage(@UserId Long userId) {
+        MainPageResponseDto mainPage = userService.getMainPage(userId);
+        return SuccessResponse.ok(mainPage);
+    }
 
 
 }
