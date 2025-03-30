@@ -4,6 +4,7 @@ import com.example.comus.domain.answer.repository.AnswerRepository;
 import com.example.comus.domain.answer.service.AnswerService;
 import com.example.comus.domain.block.dto.response.BlockResponseDto;
 import com.example.comus.domain.block.service.BlockService;
+import com.example.comus.domain.question.dto.response.QuestionCountResponseDto;
 import com.example.comus.domain.question.dto.response.RandomQuestionResponseDto;
 import com.example.comus.domain.question.repository.QuestionLikeRepository;
 import com.example.comus.domain.question.service.QuestionService;
@@ -114,7 +115,8 @@ public class UserService {
         UserInfoResponseDto user = getUserInfo(userId);
         List<BlockResponseDto> blocks = blockService.getBlock(userId);
         RandomQuestionResponseDto randomQuestion = questionService.getRandomQuestion();
-        return MainPageResponseDto.of(user,randomQuestion,blocks);
+        List<QuestionCountResponseDto> questionCounts = questionService.getQuestionCountByCategory();
+        return MainPageResponseDto.of(user,randomQuestion,blocks,questionCounts);
     }
 
     public UserInfoResponseDto getUserInfo(Long userId) {

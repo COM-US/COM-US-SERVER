@@ -1,6 +1,8 @@
 package com.example.comus.domain.question.service;
 
+import com.example.comus.domain.answer.entity.Answer;
 import com.example.comus.domain.answer.repository.AnswerRepository;
+import com.example.comus.domain.question.dto.response.QuestionCountResponseDto;
 import com.example.comus.domain.question.dto.response.QuestionListResponseDto;
 import com.example.comus.domain.question.dto.response.QuestionResponseDto;
 import com.example.comus.domain.question.dto.response.RandomQuestionResponseDto;
@@ -128,5 +130,28 @@ public class QuestionService {
         Long questionId = getRandomQuestionId();
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
         return RandomQuestionResponseDto.from(question);
+    }
+
+    // 카테고리별 질문 통계 조회
+    public List<QuestionCountResponseDto> getQuestionCountByCategory() {
+        return List.of(QuestionCategory.values()).stream()
+                .map(category -> {
+                    List<Question> questions = questionRepository.findByCategory(category);
+                    int totalCount = questions.size();
+                    int answeredCount = 0;
+
+                    for (Question question : questions) {
+                        List<Answer> answers = answerRepository.findByQuestion(question);
+                        if (!answers.isEmpty()) {
+                            answeredCount++;
+                        }
+                    }
+
+                    int percentage = totalCount == 0 ? 0 : (answeredCount * 100) / totalCount;
+                    String count = answeredCount + "/" + totalCount;
+
+                    return new QuestionCountResponseDto(category, totalCount, answeredCount,count, percentage + "%");
+                })
+                .collect(Collectors.toList());
     }
 }
