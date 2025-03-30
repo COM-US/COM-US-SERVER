@@ -1,27 +1,38 @@
 package com.example.comus.domain.user.dto.response;
 
+import com.example.comus.domain.answer.dto.response.WeeklyAnswerResponseDto;
 import com.example.comus.domain.user.entity.User;
-import lombok.*;
+import lombok.Builder;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
+import java.util.List;
+import java.util.Locale;
 
 @Builder
 public record UserInfoResponseDto(
-        Long id,
         String name,
         String imageUrl,
-        LocalTime todayChatTime,
-        LocalTime totalChatTime,
-        int totalChatCount
-
+        int answerCount,
+        int likeCount,
+        String week,
+        List<WeeklyAnswerResponseDto> weeklyAnswer
 ) {
-    public static UserInfoResponseDto from(User user){
+    private static String getCurrentWeek() {
+        LocalDate now = LocalDate.now();
+        int weekOfMonth = now.get(ChronoField.ALIGNED_WEEK_OF_MONTH);
+        return now.format(DateTimeFormatter.ofPattern("MM월", Locale.KOREAN)) + " " + weekOfMonth + "주차";
+    }
+
+    public static UserInfoResponseDto of(User user, int answerCount, int likeCount, List<WeeklyAnswerResponseDto> weeklyAnswer) {
         return UserInfoResponseDto.builder()
-                .id(user.getId())
                 .name(user.getName())
                 .imageUrl(user.getImageUrl())
-                .totalChatCount(user.getTotalChatCount())
+                .answerCount(answerCount)
+                .likeCount(likeCount)
+                .week(getCurrentWeek())
+                .weeklyAnswer(weeklyAnswer)
                 .build();
     }
 }
