@@ -1,9 +1,7 @@
 package com.example.comus.domain.answer.service;
 
 import com.example.comus.domain.answer.dto.request.AnswerRequestDto;
-import com.example.comus.domain.answer.dto.response.AnswerHistoryListResponseDto;
-import com.example.comus.domain.answer.dto.response.AnswerHistoryResponseDto;
-import com.example.comus.domain.answer.dto.response.StatisticResponseDto;
+import com.example.comus.domain.answer.dto.response.*;
 import com.example.comus.domain.answer.entity.Answer;
 import com.example.comus.domain.answer.repository.AnswerRepository;
 import com.example.comus.domain.question.entity.AnswerType;
@@ -112,5 +110,19 @@ public class AnswerService {
         return answer.getCreatedAt().format(dateFormatter);
     }
 
+    //이전 답변 상세보기
+    public AnswerByQuestionResponseDto getAnswerByQuestion(Long userId, Long questionId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
+
+        List<AnswerResponseDto> answers = answerRepository.findByUserAndQuestionOrderByCreatedAtDesc(user, question).stream()
+                .map(AnswerResponseDto::from)
+                .collect(Collectors.toList());
+
+        return AnswerByQuestionResponseDto.from(question,answers);
+    }
 }
 
