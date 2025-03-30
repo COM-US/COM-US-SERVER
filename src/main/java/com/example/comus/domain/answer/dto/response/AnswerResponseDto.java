@@ -23,5 +23,4 @@ public record AnswerResponseDto(
                 answer.getAnswerContent()
         );
     }
-
 }

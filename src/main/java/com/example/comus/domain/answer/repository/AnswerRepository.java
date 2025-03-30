@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long>{
@@ -22,12 +24,12 @@ public interface AnswerRepository extends JpaRepository<Answer, Long>{
     @Query("SELECT COUNT(a) FROM Answer a WHERE a.user = :user AND a.question = :question")
     int countByUserAndQuestion(@Param("user") User user, @Param("question") Question question);
 
-    long countByUserId(Long userId);
-
     Long countByUserIdAndQuestionCategoryAndIsUsedFalse(Long userId, QuestionCategory category);
     List<Answer> findByUserIdAndQuestionCategoryAndIsUsedFalseOrderByCreatedAtAsc(Long userId, QuestionCategory questionCategory);
-
     List<Answer> findByUserOrderByCreatedAtAsc(User user);
-
     List<Answer> findByUserAndQuestionOrderByCreatedAtDesc(User user, Question question);
+
+    int countByUserId(Long userId);
+
+    List<Answer> findByUserIdAndCreatedAtBetween(Long userId, LocalDateTime startDate, LocalDateTime endDate);
 }
