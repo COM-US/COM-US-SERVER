@@ -13,5 +13,9 @@ import java.util.Optional;
 public interface BlockRepository extends JpaRepository<Block, Long> {
 
     List<Block> findByAnswer(Answer answer);
-    List<Block> findByAnswerUserId(Long userId);
+
+    // block -> answer ->userId로 level이 가장 높은 Block 조회
+    @Query("SELECT b FROM Block b WHERE b.level = (SELECT MAX(b2.level) FROM Block b2 WHERE b2.answer.user.id = :userId) AND b.answer.user.id = :userId")
+    List<Block> findMaxLevelBlocksByUserId(Long userId);
+
 }

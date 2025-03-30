@@ -2,12 +2,15 @@ package com.example.comus.domain.block.controller;
 
 import com.example.comus.domain.block.dto.request.BlockPlaceRequestDto;
 import com.example.comus.domain.block.dto.response.BlockCountResponseDto;
+import com.example.comus.domain.block.dto.response.BlockResponseDto;
 import com.example.comus.domain.block.service.BlockService;
 import com.example.comus.global.common.SuccessResponse;
 import com.example.comus.global.config.auth.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -30,14 +33,14 @@ public class BlockController {
         return SuccessResponse.ok(null);
     }
 
-    /*
+
     //블럭 조회
     @GetMapping
     public ResponseEntity<?> getBlock(@UserId Long userId)  {
         List<BlockResponseDto> blockPlace = blockService.getBlock(userId);
         return SuccessResponse.ok(blockPlace);
     }
-    */
+
 
 
 }
