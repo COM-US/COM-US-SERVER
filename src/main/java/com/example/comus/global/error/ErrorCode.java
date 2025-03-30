@@ -49,6 +49,8 @@ public enum ErrorCode {
     CONFLICT(HttpStatus.CONFLICT, "이미 존재하는 리소스입니다."),
     QUESTION_ALREADY_LIKED(HttpStatus.CONFLICT, "이미 찜하기를 누른 질문입니다."),
     BLOCK_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 카테고리에 대한 블럭이 존재하지 않습니다."),
+    BLOCK_POSITION_OUT_OF_BOUNDS(HttpStatus.CONFLICT, "블럭 위치가 범위를 벗어났습니다."),
+    BLOCK_POSITION_ALREADY_OCCUPIED(HttpStatus.CONFLICT, "블럭 위치가 이미 차 있습니다."),
     /**
      * 500 Internal Server Error
      */
