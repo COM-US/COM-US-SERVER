@@ -35,9 +35,9 @@ public enum ErrorCode {
     ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND, "엔티티를 찾을 수 없습니다."),
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "질문을 찾을 수 없습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
-    SIGNLANGUAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "수화를 찾을 수 없습니다."),
     ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "답변을 찾을 수 없습니다."),
     QUESTION_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "찜한 질문을 찾을 수 없습니다."),
+    BLOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "블록을 찾을 수 없습니다."),
     /**
      * 405 Method Not Allowed
      */
@@ -48,7 +48,7 @@ public enum ErrorCode {
      */
     CONFLICT(HttpStatus.CONFLICT, "이미 존재하는 리소스입니다."),
     QUESTION_ALREADY_LIKED(HttpStatus.CONFLICT, "이미 찜하기를 누른 질문입니다."),
-
+    BLOCK_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 카테고리에 대한 블럭이 존재하지 않습니다."),
     /**
      * 500 Internal Server Error
      */
