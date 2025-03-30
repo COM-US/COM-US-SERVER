@@ -52,12 +52,16 @@ jobs:
         echo "$PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
         ssh -T -o StrictHostKeyChecking=no -i private_key.pem ubuntu@$SERVER_ADDRESS << 'EOF'
+          # Docker에서 KST 시간대로 설정
           docker pull hysong4u/com-us-server:latest
+          
           existing_container_id=$(sudo docker ps -q --filter "publish=443")
           [ -n "$existing_container_id" ] && sudo docker stop $existing_container_id && sudo docker rm $existing_container_id
+          
           sudo docker image prune -f
-          docker run -d -p 443:443 hysong4u/com-us-server:latest
+          docker run -d -p 443:443 -e TZ=Asia/Seoul hysong4u/com-us-server:latest
         EOF
+
          #docker 권한 문제 발생시
          #sudo chmod 660 /var/run/docker.sock
          #sudo /usr/sbin/usermod -aG docker $USER
