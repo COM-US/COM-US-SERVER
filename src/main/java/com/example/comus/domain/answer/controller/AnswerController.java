@@ -1,10 +1,9 @@
 package com.example.comus.domain.answer.controller;
 
 import com.example.comus.domain.answer.dto.request.AnswerRequestDto;
+import com.example.comus.domain.answer.dto.response.AnswerByQuestionResponseDto;
 import com.example.comus.domain.answer.dto.response.AnswerHistoryListResponseDto;
-import com.example.comus.domain.answer.dto.response.AnswerHistoryResponseDto;
 import com.example.comus.domain.answer.service.AnswerService;
-import com.example.comus.domain.question.service.QuestionService;
 import com.example.comus.global.common.SuccessResponse;
 import com.example.comus.global.config.auth.UserId;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +26,18 @@ public class AnswerController {
         return SuccessResponse.ok(null);
     }
 
-
-    //이전 답변 보기 페이지 조회
+    //월별 상세 페이지 조회
     @GetMapping
     public ResponseEntity<?> getAnswer(@UserId Long userId) {
         List<AnswerHistoryListResponseDto> answerHistory = answerService.getAnswerHistory(userId);
         return SuccessResponse.ok(answerHistory);
+    }
+
+    //이전 답변 보기 페이지 조회
+    @GetMapping("/{questionId}")
+    public ResponseEntity<?> getAnswerByQuestion(@UserId Long userId, @PathVariable Long questionId) {
+        AnswerByQuestionResponseDto answerByQuestion = answerService.getAnswerByQuestion(userId, questionId);
+        return SuccessResponse.ok(answerByQuestion);
     }
 
 }

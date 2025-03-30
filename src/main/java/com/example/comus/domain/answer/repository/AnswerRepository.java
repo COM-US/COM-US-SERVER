@@ -29,4 +29,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long>{
 
     List<Answer> findByUserOrderByCreatedAtAsc(User user);
 
+    List<Answer> findByUserAndQuestionOrderByCreatedAtDesc(User user, Question question);
 }
