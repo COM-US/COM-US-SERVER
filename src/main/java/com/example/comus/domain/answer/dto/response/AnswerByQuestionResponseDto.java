@@ -10,7 +10,7 @@ import java.util.List;
 public record AnswerByQuestionResponseDto(
         Long questionId,
         QuestionCategory category,
-        AnswerType answerType,
+        AnswerType QuestionAnswerType,
         String questionContent,
         int answerCount,
         List<AnswerResponseDto> answers
