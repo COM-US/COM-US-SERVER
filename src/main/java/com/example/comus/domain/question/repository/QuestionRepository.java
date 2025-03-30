@@ -10,6 +10,4 @@ import java.util.List;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     List<Question> findByCategory(QuestionCategory category);
-    int countByCategory(QuestionCategory category);
-    List<Question> findByAnswerType(AnswerType answerType);
 }

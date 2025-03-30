@@ -3,6 +3,7 @@ package com.example.comus.domain.question.service;
 import com.example.comus.domain.answer.repository.AnswerRepository;
 import com.example.comus.domain.question.dto.response.QuestionListResponseDto;
 import com.example.comus.domain.question.dto.response.QuestionResponseDto;
+import com.example.comus.domain.question.dto.response.RandomQuestionResponseDto;
 import com.example.comus.domain.question.entity.*;
 import com.example.comus.domain.question.repository.QuestionLikeRepository;
 import com.example.comus.domain.question.repository.QuestionRepository;
@@ -32,7 +33,7 @@ public class QuestionService {
 
     // 랜덤 질문 아이디
     public Long getRandomQuestionId() {
-        List<Question> questions = questionRepository.findByAnswerType(AnswerType.MULTIPLE_CHOICE);
+        List<Question> questions = questionRepository.findAll();
         int randomIndex = (int) (Math.random() * questions.size());
         return questions.get(randomIndex).getId();
     }
@@ -98,14 +99,6 @@ public class QuestionService {
 
     }
 
-    public QuestionListResponseDto getQuestionAndCount(Long userId, Long questionId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
-        int answerCount = answerRepository.countByUserAndQuestion(user, question);
-        boolean isLiked = questionLikeRepository.existsByUserAndQuestion(user, question);
-        return QuestionListResponseDto.from(question, answerCount, isLiked);
-    }
-
     public void likeQuestion(Long userId, Long questionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
@@ -129,5 +122,11 @@ public class QuestionService {
                 .orElseThrow(() -> new EntityNotFoundException(QUESTION_LIKE_NOT_FOUND));
 
         questionLikeRepository.delete(questionLike);
+    }
+
+    public RandomQuestionResponseDto getRandomQuestion() {
+        Long questionId = getRandomQuestionId();
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException(QUESTION_NOT_FOUND));
+        return RandomQuestionResponseDto.from(question);
     }
 }
