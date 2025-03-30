@@ -22,7 +22,7 @@ public record UserInfoResponseDto(
     private static String getCurrentWeek() {
         LocalDate now = LocalDate.now();
         int weekOfMonth = now.get(ChronoField.ALIGNED_WEEK_OF_MONTH);
-        return now.format(DateTimeFormatter.ofPattern("MM월", Locale.KOREAN)) + " " + weekOfMonth + "주차";
+        return now.format(DateTimeFormatter.ofPattern("M월", Locale.KOREAN)) + " " + weekOfMonth + "주차";
     }
 
     public static UserInfoResponseDto of(User user, int answerCount, int likeCount, List<WeeklyAnswerResponseDto> weeklyAnswer) {
