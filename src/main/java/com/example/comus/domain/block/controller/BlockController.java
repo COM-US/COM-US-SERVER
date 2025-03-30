@@ -1,6 +1,6 @@
 package com.example.comus.domain.block.controller;
 
-import com.example.comus.domain.block.dto.request.BlockPlaceRequestDto;
+import com.example.comus.domain.block.dto.request.BlockRequestDto;
 import com.example.comus.domain.block.dto.response.BlockCountResponseDto;
 import com.example.comus.domain.block.dto.response.BlockResponseDto;
 import com.example.comus.domain.block.service.BlockService;
@@ -28,8 +28,8 @@ public class BlockController {
 
     //블럭 배치
     @PostMapping
-    public ResponseEntity<?> createBlockBatch(@UserId Long userId, @RequestBody BlockPlaceRequestDto blockPlaceRequestDto) {
-        blockService.createBlock(userId, blockPlaceRequestDto);
+    public ResponseEntity<?> createBlockBatch(@UserId Long userId, @RequestBody BlockRequestDto blockRequest) {
+        blockService.createBlock(userId, blockRequest);
         return SuccessResponse.ok(null);
     }
 

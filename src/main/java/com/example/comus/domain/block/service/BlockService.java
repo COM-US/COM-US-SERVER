@@ -3,6 +3,7 @@ package com.example.comus.domain.block.service;
 import com.example.comus.domain.answer.entity.Answer;
 import com.example.comus.domain.answer.repository.AnswerRepository;
 import com.example.comus.domain.block.dto.request.BlockPlaceRequestDto;
+import com.example.comus.domain.block.dto.request.BlockRequestDto;
 import com.example.comus.domain.block.dto.response.BlockCountResponseDto;
 import com.example.comus.domain.block.dto.response.BlockPlaceResponseDto;
 import com.example.comus.domain.block.dto.response.BlockResponseDto;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.example.comus.global.error.ErrorCode.BLOCK_CATEGORY_NOT_FOUND;
+import static com.example.comus.global.error.ErrorCode.*;
 
 @AllArgsConstructor
 @Transactional
@@ -29,6 +30,8 @@ public class BlockService {
 
     private final AnswerRepository answerRepository;
     private final BlockRepository blockRepository;
+    private final static int MAX_SIZE = 4;
+
 
     // 블럭 개수 조회
     public BlockCountResponseDto getBlockCount(Long userId) {
@@ -63,32 +66,32 @@ public class BlockService {
         return BlockResponseDto.of(answer, blockPlaceList, level);
     }
 
-
+    // TODO : 답변의 질문 카테고리에 따라 블록 모형 & 개수 제한
     // 블록 배치
     @Transactional
-    public void createBlock(Long userId, BlockPlaceRequestDto blockPlaceRequestDto) {
+    public void createBlock(Long userId, BlockRequestDto blockRequest) {
 
-        Answer answer = getUnusedAnswer(userId, blockPlaceRequestDto.questionCategory());
+        Answer answer = getUnusedAnswer(userId, blockRequest.category());
 
-        int[][] blockPlace = blockPlaceRequestDto.blockPlace();
+        int currentLevel = blockRepository.findMaxLevelByUserId(userId);
 
-        for (int row = 0; row < blockPlace.length; row++) {
-            for (int col = 0; col < blockPlace[row].length; col++) {
-                if (blockPlace[row][col] == 1) {
-                    Block block = Block.builder()
-                            .level(1)
-                            .blockRow(row)
-                            .blockColumn(col)
-                            .answer(answer)
-                            .build();
+        if (isLevelFull(userId, currentLevel)) {currentLevel++;}
+        validateBlockPosition(blockRequest.blockPlace(), currentLevel, userId);
 
-                    blockRepository.save(block);
-                }
-            }
+        for (BlockPlaceRequestDto place : blockRequest.blockPlace()) {
+            Block block = Block.builder()
+                    .answer(answer)
+                    .blockRow(place.row())
+                    .blockColumn(place.column())
+                    .level(currentLevel)
+                    .build();
+
+            blockRepository.save(block);
         }
         answer.setUsed();
     }
 
+    // 사용하지 않는 답변
     private Answer getUnusedAnswer(Long userId, QuestionCategory questionCategory) {
         List<Answer> answers = answerRepository.findByUserIdAndQuestionCategoryAndIsUsedFalseOrderByCreatedAtAsc(userId, questionCategory);
         if (answers.isEmpty()) {
@@ -97,6 +100,24 @@ public class BlockService {
         return answers.get(0);
     }
 
+    // 블록 위치 유효성 검사
+    public void validateBlockPosition(List<BlockPlaceRequestDto> blockPlaces, int currentLevel, Long userId) {
+        for (BlockPlaceRequestDto place : blockPlaces) {
+            if (place.row() < 0 || place.row() >= MAX_SIZE || place.column() < 0 || place.column() >= MAX_SIZE) {
+                throw new BusinessException(BLOCK_POSITION_OUT_OF_BOUNDS);
+            }
+            boolean positionExists = blockRepository.existsByBlockRowAndBlockColumnAndLevelAndAnswer_UserId(
+                    place.row(), place.column(), currentLevel, userId);
+            if (positionExists) {
+                throw new BusinessException(BLOCK_POSITION_ALREADY_OCCUPIED);
+            }
+        }
+    }
+
+    private boolean isLevelFull(Long userId, int level) {
+        int blockCount = blockRepository.countByAnswer_UserIdAndLevel(userId, level);
+        return blockCount >= MAX_SIZE * MAX_SIZE;
+    }
 
 }
 
