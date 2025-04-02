@@ -104,11 +104,8 @@ public class UserService {
         jwtProvider.equalsRefreshToken(refreshToken, storedRefreshToken);
 
         String newAccessToken = issueNewAccessToken(userId);
-        String newRefreshToken = issueNewRefreshToken(userId);
 
-        redisTemplate.opsForValue().set(redisKey, newRefreshToken, REFRESH_TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
-
-        return UserTokenResponseDto.of(newAccessToken, newRefreshToken);
+        return UserTokenResponseDto.of(newAccessToken, refreshToken);
     }
 
     public MainPageResponseDto getMainPage(Long userId) {
