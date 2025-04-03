@@ -12,7 +12,7 @@ public interface BlockRepository extends JpaRepository<Block, Long> {
     @Query("SELECT b FROM Block b WHERE b.level = (SELECT MAX(b2.level) FROM Block b2 WHERE b2.answer.user.id = :userId) AND b.answer.user.id = :userId")
     List<Block> findMaxLevelBlocksByUserId(Long userId);
 
-    @Query("SELECT COALESCE(MAX(b.level), 0) FROM Block b WHERE b.answer.user.id = :userId")
+    @Query("SELECT COALESCE(MAX(b.level), 1) FROM Block b WHERE b.answer.user.id = :userId")
     int findMaxLevelByUserId(Long userId);
 
     int countByAnswer_UserIdAndLevel(Long userId, int level);
