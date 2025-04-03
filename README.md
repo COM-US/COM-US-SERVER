@@ -95,7 +95,7 @@ COM-US는 <b>`농인 부모와 청인 자녀(CODA) 간 정서적 유대 강화�
 <b>(3) AI</b>
 - 프레임워크: Flask
 - 개발 언어: Python
-- 활용 기술: PyTorch , OpenAI API
+- 활용 기술: OpenAI API
 
   
 <br>
