@@ -18,4 +18,6 @@ public interface BlockRepository extends JpaRepository<Block, Long> {
     int countByAnswer_UserIdAndLevel(Long userId, int level);
 
     boolean existsByBlockRowAndBlockColumnAndLevelAndAnswer_UserId(int row, int column, int currentLevel, Long answerId);
+
+    List<Block> findByAnswer_UserId(Long userId);
 }

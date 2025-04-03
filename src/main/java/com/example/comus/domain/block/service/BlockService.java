@@ -126,5 +126,11 @@ public class BlockService {
         return blockCount >= MAX_SIZE * MAX_SIZE;
     }
 
+    public void deleteBlock(Long userId) {
+        List<Block> blocks = blockRepository.findByAnswer_UserId(userId);
+        for (Block block : blocks) {
+            blockRepository.delete(block);
+        }
+    }
 }
 

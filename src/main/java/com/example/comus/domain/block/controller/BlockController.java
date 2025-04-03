@@ -33,13 +33,20 @@ public class BlockController {
         return SuccessResponse.ok(null);
     }
 
-
     //블럭 조회
     @GetMapping
     public ResponseEntity<?> getBlock(@UserId Long userId)  {
         List<BlockResponseDto> blockPlace = blockService.getBlock(userId);
         return SuccessResponse.ok(blockPlace);
     }
+
+    //블록 삭제(관리자용)
+    @DeleteMapping
+    public ResponseEntity<?> deleteBlock(@UserId Long userId) {
+        blockService.deleteBlock(userId);
+        return SuccessResponse.ok(null);
+    }
+
 
 
 
