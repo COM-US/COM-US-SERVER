@@ -31,6 +31,8 @@ public class UserController {
     @PostMapping("/login")
     ResponseEntity<SuccessResponse<?>> login(@RequestBody LoginRequestDto loginRequest) {
         UserTokenResponseDto userToken = userService.login(loginRequest);
+        System.out.println("로그인" + loginRequest); //삭제 필요
+        System.out.println("현재 리프레쉬 토큰" + userToken.refreshToken()); //삭제 필요
         return SuccessResponse.ok(userToken);
     }
 
@@ -44,6 +46,7 @@ public class UserController {
     // 리프레쉬 토큰 재발급
     @PostMapping("/reissue")
     public ResponseEntity<SuccessResponse<?>> reissueToken(@RequestBody UserTokenRequestDto uerTokenRequest) throws JsonProcessingException {
+        System.out.println("리프레쉬 토큰 재발급 요청" + uerTokenRequest); //삭제 필요
         UserTokenResponseDto userToken = userService.reissue(uerTokenRequest);
         return SuccessResponse.ok(userToken);
     }
