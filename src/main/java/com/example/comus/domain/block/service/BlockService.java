@@ -45,6 +45,12 @@ public class BlockService {
 
     //블록 조회
     public List<BlockResponseDto> getBlock(Long userId) {
+
+        int currentLevel = blockRepository.findMaxLevelByUserId(userId);
+        if (isLevelFull(userId, currentLevel)) {
+            return null;
+        }
+
         // 사용자 현재 블록(단계가 가장 높은) 조회 & 같은 답변 정보를 가진 블록 그룹화
         return blockRepository.findMaxLevelBlocksByUserId(userId).stream()
                 .collect(Collectors.groupingBy(block -> block.getAnswer().getId()))
@@ -55,6 +61,7 @@ public class BlockService {
 
     // 그룹화 된 블록에 대한 답변, 블록 위치 정보 생성
     private BlockResponseDto createBlockResponse(List<Block> blocks) {
+
         Answer answer = blocks.get(0).getAnswer();
         int level = blocks.get(0).getLevel();
 
