@@ -2,7 +2,7 @@ package com.example.comus.domain.user.service;
 
 import com.example.comus.domain.answer.repository.AnswerRepository;
 import com.example.comus.domain.answer.service.AnswerService;
-import com.example.comus.domain.block.dto.response.BlockResponseDto;
+import com.example.comus.domain.block.dto.response.BlockBoardResponseDto;
 import com.example.comus.domain.block.service.BlockService;
 import com.example.comus.domain.question.dto.response.QuestionCountResponseDto;
 import com.example.comus.domain.question.dto.response.RandomQuestionResponseDto;
@@ -110,10 +110,10 @@ public class UserService {
 
     public MainPageResponseDto getMainPage(Long userId) {
         UserInfoResponseDto user = getUserInfo(userId);
-        List<BlockResponseDto> blocks = blockService.getBlock(userId);
+        BlockBoardResponseDto blockBoard = blockService.getBlock(userId);
         RandomQuestionResponseDto randomQuestion = questionService.getRandomQuestion();
         List<QuestionCountResponseDto> questionCounts = questionService.getQuestionCountByCategory(userId);
-        return MainPageResponseDto.of(user,randomQuestion,blocks,questionCounts);
+        return MainPageResponseDto.of(user,randomQuestion,blockBoard,questionCounts);
     }
 
     public UserInfoResponseDto getUserInfo(Long userId) {

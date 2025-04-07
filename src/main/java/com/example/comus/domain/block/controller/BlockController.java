@@ -1,8 +1,8 @@
 package com.example.comus.domain.block.controller;
 
 import com.example.comus.domain.block.dto.request.BlockRequestDto;
+import com.example.comus.domain.block.dto.response.BlockBoardResponseDto;
 import com.example.comus.domain.block.dto.response.BlockCountResponseDto;
-import com.example.comus.domain.block.dto.response.BlockResponseDto;
 import com.example.comus.domain.block.service.BlockService;
 import com.example.comus.global.common.SuccessResponse;
 import com.example.comus.global.config.auth.UserId;
@@ -36,8 +36,8 @@ public class BlockController {
     //블럭 조회
     @GetMapping
     public ResponseEntity<?> getBlock(@UserId Long userId)  {
-        List<BlockResponseDto> blockPlace = blockService.getBlock(userId);
-        return SuccessResponse.ok(blockPlace);
+        BlockBoardResponseDto blockBoard = blockService.getBlock(userId);
+        return SuccessResponse.ok(blockBoard);
     }
 
     //블록 삭제(관리자용)
@@ -46,8 +46,4 @@ public class BlockController {
         blockService.deleteBlock(userId);
         return SuccessResponse.ok(null);
     }
-
-
-
-
 }

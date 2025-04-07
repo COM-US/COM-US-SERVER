@@ -4,6 +4,7 @@ import com.example.comus.domain.answer.entity.Answer;
 import com.example.comus.domain.answer.repository.AnswerRepository;
 import com.example.comus.domain.block.dto.request.BlockPlaceRequestDto;
 import com.example.comus.domain.block.dto.request.BlockRequestDto;
+import com.example.comus.domain.block.dto.response.BlockBoardResponseDto;
 import com.example.comus.domain.block.dto.response.BlockCountResponseDto;
 import com.example.comus.domain.block.dto.response.BlockPlaceResponseDto;
 import com.example.comus.domain.block.dto.response.BlockResponseDto;
@@ -43,34 +44,38 @@ public class BlockService {
         return BlockCountResponseDto.of(countMap.get(QuestionCategory.DAILY), countMap.get(QuestionCategory.SCHOOL), countMap.get(QuestionCategory.HOBBY), countMap.get(QuestionCategory.FAMILY), countMap.get(QuestionCategory.FRIEND));
     }
 
-    //블록 조회
-    public List<BlockResponseDto> getBlock(Long userId) {
-
+    // 블록 조회
+    public BlockBoardResponseDto getBlock(Long userId) {
         int currentLevel = blockRepository.findMaxLevelByUserId(userId);
+
+        // 레벨이 가득 차면 블록판 초기화 & 레벨 증가
         if (isLevelFull(userId, currentLevel)) {
-            return null;
+            currentLevel++;
+            return new BlockBoardResponseDto(currentLevel, null);
         }
 
-        // 사용자 현재 블록(단계가 가장 높은) 조회 & 같은 답변 정보를 가진 블록 그룹화
-        return blockRepository.findMaxLevelBlocksByUserId(userId).stream()
+        // 사용자 현재 레벨의 블록 리스트 조회 & 같은 답변 정보를 가진 블록 그룹화
+        List<BlockResponseDto> blockList = blockRepository.findMaxLevelBlocksByUserId(userId).stream()
                 .collect(Collectors.groupingBy(block -> block.getAnswer().getId()))
                 .values().stream()
                 .map(this::createBlockResponse)
                 .collect(Collectors.toList());
+
+        return BlockBoardResponseDto.of(currentLevel, blockList);
     }
+
 
     // 그룹화 된 블록에 대한 답변, 블록 위치 정보 생성
     private BlockResponseDto createBlockResponse(List<Block> blocks) {
 
         Answer answer = blocks.get(0).getAnswer();
-        int level = blocks.get(0).getLevel();
 
         // 블록 위치 정보
         List<BlockPlaceResponseDto> blockPlaceList = blocks.stream()
                 .map(block -> new BlockPlaceResponseDto(block.getId(), block.getBlockRow(), block.getBlockColumn()))
                 .collect(Collectors.toList());
 
-        return BlockResponseDto.of(answer, blockPlaceList, level);
+        return BlockResponseDto.of(answer, blockPlaceList);
     }
 
     // TODO : 답변의 질문 카테고리에 따라 블록 모형 & 개수 제한

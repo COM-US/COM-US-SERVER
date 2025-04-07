@@ -7,7 +7,6 @@ import com.example.comus.domain.question.entity.QuestionCategory;
 import java.util.List;
 
 public record BlockResponseDto(
-        int level,
         Long questionId,
         QuestionCategory category,
         String questionContent,
@@ -16,9 +15,8 @@ public record BlockResponseDto(
         String answerContent,
         List<BlockPlaceResponseDto> blockPlace
 ) {
-    public static BlockResponseDto of(Answer answer, List<BlockPlaceResponseDto> blockPlace, int level) {
+    public static BlockResponseDto of(Answer answer, List<BlockPlaceResponseDto> blockPlace) {
         return new BlockResponseDto(
-                level,
                 answer.getQuestion().getId(),
                 answer.getQuestion().getCategory(),
                 answer.getQuestion().getQuestionContent(),
