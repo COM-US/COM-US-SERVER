@@ -133,7 +133,10 @@ public class QuestionService {
     }
 
     // 카테고리별 질문 통계 조회
-    public List<QuestionCountResponseDto> getQuestionCountByCategory() {
+    public List<QuestionCountResponseDto> getQuestionCountByCategory(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+
         return List.of(QuestionCategory.values()).stream()
                 .map(category -> {
                     List<Question> questions = questionRepository.findByCategory(category);
@@ -141,7 +144,7 @@ public class QuestionService {
                     int answeredCount = 0;
 
                     for (Question question : questions) {
-                        List<Answer> answers = answerRepository.findByQuestion(question);
+                        List<Answer> answers = answerRepository.findByQuestionAndUser(question, user);
                         if (!answers.isEmpty()) {
                             answeredCount++;
                         }
@@ -150,7 +153,7 @@ public class QuestionService {
                     int percentage = totalCount == 0 ? 0 : (answeredCount * 100) / totalCount;
                     String count = answeredCount + "/" + totalCount;
 
-                    return new QuestionCountResponseDto(category, totalCount, answeredCount,count, percentage + "%");
+                    return new QuestionCountResponseDto(category, totalCount, answeredCount, count, percentage + "%");
                 })
                 .collect(Collectors.toList());
     }

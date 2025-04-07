@@ -32,6 +32,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long>{
     int countByUserId(Long userId);
 
     List<Answer> findByUserIdAndCreatedAtBetween(Long userId, LocalDateTime startDate, LocalDateTime endDate);
-
-    List<Answer> findByQuestion(Question question);
+    List<Answer> findByQuestionAndUser(Question question, User user);
 }

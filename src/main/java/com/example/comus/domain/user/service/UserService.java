@@ -112,7 +112,7 @@ public class UserService {
         UserInfoResponseDto user = getUserInfo(userId);
         List<BlockResponseDto> blocks = blockService.getBlock(userId);
         RandomQuestionResponseDto randomQuestion = questionService.getRandomQuestion();
-        List<QuestionCountResponseDto> questionCounts = questionService.getQuestionCountByCategory();
+        List<QuestionCountResponseDto> questionCounts = questionService.getQuestionCountByCategory(userId);
         return MainPageResponseDto.of(user,randomQuestion,blocks,questionCounts);
     }
 
