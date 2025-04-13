@@ -1,28 +1,8 @@
 <h2>COM-US - 농인 부모와 청인 자녀(CODA) 간 정서적 유대 강화를 위한 AI 기반 양방향 소통 플랫폼 <br></h2>
-<div align="center">
-  
 <img src="https://github.com/user-attachments/assets/41f165fb-d883-49c2-aea4-1836deb242f8" width="800">
-
-</div>
-
+<br>
 <br>
 
-## ✴️ 이전 프로젝트 ‘COMMA’ 그리고 ‘COM-US’의 방향성
-1️⃣ https://github.com/COM-MA     
-2️⃣ https://www.phaseon.me/com-ma
-<br><br>
-이전 프로젝트 <b>`AI 카메라 기반 수화 학습 교육 서비스 ‘COM-MA’`</b>는 Google Solution Challenge Top100에 진출한 서비스로, AI 카메라를 활용해 어린이 코다(CODA)가 부모와 상호작용하며 효과적으로 수화를 학습하는 것을 목표로 했습니다.
-그러나 소리샘복지관 및 아시아스쿨에서의 사용자 테스트와 심층 인터뷰를 통해, 단순한 수화 교육보다 <b>부모와 자녀 간의 정서적 교류와 신뢰 구축이 더욱 중요하다</b>는 사실을 확인했습니다.
-
-이에 따라 서비스는 <b>‘`COM-US’`</b>로 발전하였으며, 단순한 수화 학습을 넘어 부모와 자녀 간 자연스러운 소통을 촉진하고 가족 간의 유대감을 강화하는 방향으로 재정비되었습니다.
-현재 스마일게이트의 지원을 받아 이를 고도화하고 있으며, 부모와 자녀가 더욱 깊이 연결될 수 있도록 다양한 기능을 추가 개발 중입니다.
-
-<br>
-
-## ✴️ COM-US 기획 소개
-📁 https://comus.oopy.io/
-
-<br>
 
 ## ✴️ COM-US 시스템 플로우 및 핵심 기능
 
